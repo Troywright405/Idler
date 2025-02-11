@@ -56,5 +56,6 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "Idler.sln"
+    "dotnet.defaultSolution": "Idler.sln",
+    "FSharp.suggestGitignore": false
 }

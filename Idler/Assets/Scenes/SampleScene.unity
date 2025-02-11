@@ -194,6 +194,107 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 102494002}
   m_CullTransparentMesh: 1
+--- !u!1 &213010753
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 213010755}
+  - component: {fileID: 213010754}
+  m_Layer: 0
+  m_Name: Slime
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &213010754
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 213010753}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: caef58cdaf0fedf449a60ea6f0244900, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nameOfSpecies: 
+  namePersonal: 
+  level: 0
+  maxHealth: 50
+  currentHealth: 0
+  attackPowerMelee: 0
+  attackPowerRanged: 0
+  attackPowerMagic: 0
+  defenseMelee: 0
+  defenseRanged: 0
+  defenseMagic: 0
+  hitRateMelee: 0
+  hitRateRanged: 0
+  hitRateMagic: 0
+  evasionMelee: 0
+  evasionRanged: 0
+  evasionMagic: 0
+  attackSpeed: 0
+  movementSpeed: 0
+  experienceReward: 10
+  courage: 0
+  description: 
+  fireAttack: 0
+  iceAttack: 0
+  poisonAttack: 0
+  electricAttack: 0
+  physicalAttack: 0
+  magicAttack: 0
+  lightAttack: 0
+  darkAttack: 0
+  windAttack: 0
+  earthAttack: 0
+  waterAttack: 0
+  acidAttack: 0
+  psychicAttack: 0
+  necroticAttack: 0
+  chaosAttack: 0
+  gravityAttack: 0
+  soundAttack: 0
+  fireResist: 0
+  iceResist: 0
+  poisonResist: 0
+  electricResist: 0
+  physicalResist: 0
+  magicResist: 0
+  lightResist: 0
+  darkResist: 0
+  windResist: 0
+  earthResist: 0
+  waterResist: 0
+  acidResist: 0
+  psychicResist: 0
+  necroticResist: 0
+  chaosResist: 0
+  gravityResist: 0
+  soundResist: 0
+  logText: {fileID: 0}
+--- !u!4 &213010755
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 213010753}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -62.913883, y: 3.4359226, z: -1.3561356}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &453347495
 GameObject:
   m_ObjectHideFlags: 0
@@ -259,9 +360,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 200c1f6f40212094fa9a0f6314697fd9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackDamage: 10
   attackInterval: 2
   attackProgressBar: {fileID: 1491812977}
+  monsterSpawner: {fileID: 1376102602}
 --- !u!4 &486296556
 Transform:
   m_ObjectHideFlags: 0
@@ -624,54 +725,6 @@ RectTransform:
   m_AnchoredPosition: {x: -9, y: -0.00019884}
   m_SizeDelta: {x: 200, y: 45.0878}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &858970841
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 858970843}
-  - component: {fileID: 858970842}
-  m_Layer: 0
-  m_Name: Slime
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &858970842
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 858970841}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: caef58cdaf0fedf449a60ea6f0244900, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHealth: 50
-  currentHealth: 0
-  experienceReward: 10
-  logText: {fileID: 1216999921}
---- !u!4 &858970843
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 858970841}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 294.31696, y: 253.04715, z: 3.452364}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1216999920
 GameObject:
   m_ObjectHideFlags: 0
@@ -838,6 +891,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
+  baseAttackPower: 10
   currentHealth: 0
   experience: 0
   totalDamageTaken: 0
@@ -888,9 +942,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 353c58ad29e436349bec2b501faf3a8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  monsterPrefab: {fileID: 858970841}
+  monsterPrefabs:
+  - {fileID: 213010753}
   logText: {fileID: 1216999921}
   respawnTime: 1
+  maxMonsters: 5
 --- !u!4 &1376102603
 Transform:
   m_ObjectHideFlags: 0
@@ -1399,6 +1455,6 @@ SceneRoots:
   - {fileID: 1934305631}
   - {fileID: 1631912596}
   - {fileID: 1358197421}
-  - {fileID: 858970843}
   - {fileID: 486296556}
   - {fileID: 1376102603}
+  - {fileID: 213010755}

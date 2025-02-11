@@ -1,49 +1,69 @@
 using UnityEngine;
 using TMPro;
+using System.Runtime.InteropServices;
 
-public class Monster : MonoBehaviour
+public class Monster : MonoBehaviour //Right now Monsters directly become game objects. This should not stay long, we need Slime object, Goblin object, etc that inherits from Monster.
 {
-    public int maxHealth = 50;
+        // General stats for all monsters
+    public string nameOfSpecies;
+    public string namePersonal;
+    public int level;
+    public int maxHealth;
     public int currentHealth;
-    public int experienceReward = 10;
+    public int attackPowerMelee;
+    public int attackPowerRanged;
+    public int attackPowerMagic;
+    public int defenseMelee;
+    public int defenseRanged;
+    public int defenseMagic;
+    public float hitRateMelee;
+    public float hitRateRanged;
+    public float hitRateMagic;
+    public float evasionMelee;
+    public float evasionRanged;
+    public float evasionMagic;
+    public float attackSpeed;
+    public float movementSpeed;
+    public int experienceReward;
+    public int courage;
+    public string description;
 
     public TMP_Text logText; // Battle log UI
     private PlayerStats playerStats;
 
     public delegate void MonsterDeath();
-    public event MonsterDeath onMonsterDeath; // Event triggered on death
+    public delegate void MonsterDeathHandler(Monster deadMonster);
+    public event MonsterDeathHandler onMonsterDeath; // Event triggered on death
 
-    void Start()
+    protected virtual void Start()
     {
         currentHealth = maxHealth;
-        playerStats = Object.FindFirstObjectByType<PlayerStats>(); // Correct method
-        UpdateLog($"A wild Slime appears! HP: {currentHealth}/{maxHealth}");
+        playerStats = FindFirstObjectByType<PlayerStats>(); // Correct method
     }
 
-    public void TakeDamage(int damage)
+    public virtual void TakeDamage(int damage, string monsterName)
     {
         currentHealth -= damage;
-        UpdateLog($"You dealt {damage} damage! Slime HP: {currentHealth}/{maxHealth}");
+        UpdateLog($"You dealt {damage} damage! {monsterName} HP: {currentHealth}/{maxHealth}");
 
         if (currentHealth <= 0)
         {
-            Die();
+            Die(monsterName);
         }
     }
 
-    void Die()
+    void Die(string monsterName)
     {
         if (playerStats != null)
         {
             playerStats.GainExperience(experienceReward);
-            UpdateLog($"The Slime is defeated! You gained {experienceReward} EXP.");
+            UpdateLog($"The {monsterName} is defeated! You gained {experienceReward} EXP.");
         }
 
-        onMonsterDeath?.Invoke(); // Notify spawner
-        Destroy(gameObject, 0.1f); // Remove this Slime instance
+        onMonsterDeath?.Invoke(this);
     }
 
-    void UpdateLog(string message)
+    public virtual void UpdateLog(string message)
     {
         if (logText != null)
             logText.text += "\n" + message; // Append new logs

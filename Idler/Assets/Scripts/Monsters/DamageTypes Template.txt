@@ -1,0 +1,98 @@
+        //These below are not used yet, just placeholders
+    public int fireAttack;
+    public int iceAttack;
+    public int poisonAttack;
+    public int electricAttack;
+    public int physicalAttack;
+    public int magicAttack;
+    public int lightAttack;
+    public int darkAttack;
+    public int windAttack;
+    public int earthAttack;
+    public int waterAttack;
+    public int acidAttack;
+    public int psychicAttack;
+    public int necroticAttack;
+    public int chaosAttack;
+    public int gravityAttack;
+    public int soundAttack;
+
+    public float  fireResist;
+    public float  iceResist;
+    public float  poisonResist;
+    public float  electricResist;
+    public float  physicalResist;
+    public float  magicResist;
+    public float  lightResist;
+    public float  darkResist;
+    public float  windResist;
+    public float  earthResist;
+    public float  waterResist;
+    public float  acidResist;
+    public float  psychicResist;
+    public float  necroticResist;
+    public float  chaosResist;
+    public float  gravityResist;
+    public float  soundResist;
+    public enum DamageType
+    {
+        Fire,        // Fire damage
+        Ice,         // Ice damage
+        Poison,      // Poison damage
+        Electric,    // Electric damage
+        Physical,    // Physical damage (could be regular melee attacks)
+        Magic,        // Generic magic damage (non-elemental magic)
+        Light,        // Light damage (often used for holy or divine attacks)
+        Dark,         // Dark damage (often used for shadow or demonic attacks)
+        Wind,         // Wind damage
+        Earth,        // Earth damage
+        Water,        // Water damage (aka liquid)
+        Acid,         // Acid damage (often a debuff or damaging environmental effect)
+        Psychic,      // Psychic damage (damage from mental powers or mind-based attacks)
+        Necrotic,     // Necrotic damage (typically linked to death or decay)
+        Chaos,        // Chaos damage (aka raw entropy, random disruption of forces between particles/atoms)
+        Gravity,      // Maybe stronger according to opponents strength to weight ratio? (Golems weakness?)
+        Sound,        // Sound damage (potentially linked to sonic attacks)
+    }
+    public float GetResistance(DamageType damageType)
+    {
+        switch (damageType)
+        {
+            case DamageType.Fire:
+                return fireResist;
+            case DamageType.Ice:
+                return iceResist;
+            case DamageType.Poison:
+                return poisonResist;
+            case DamageType.Electric:
+                return electricResist;
+            case DamageType.Physical:
+                return physicalResist;
+            case DamageType.Magic:
+                return magicResist;
+            case DamageType.Light:
+                return lightResist;
+            case DamageType.Dark:
+                return darkResist;
+            case DamageType.Wind:
+                return windResist;
+            case DamageType.Earth:
+                return earthResist;
+            case DamageType.Water:
+                return waterResist;
+            case DamageType.Acid:
+                return acidResist;
+            case DamageType.Psychic:
+                return psychicResist;
+            case DamageType.Necrotic:
+                return necroticResist;
+            case DamageType.Chaos:
+                return chaosResist;
+            case DamageType.Gravity:
+                return gravityResist;
+            case DamageType.Sound:
+                return soundResist;
+            default:
+                return 0; // No resistance for unknown damage type
+        }
+    }
