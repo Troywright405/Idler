@@ -1,48 +1,51 @@
 using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class AutoAttack : MonoBehaviour
 {
-    public int attackDamage = 10;
+    private PlayerStats playerStats; //Initialize PlayerStats.cs functions in this class
+    //public int attackDamage = 10; //*****This should be removed, already exists in PlayerStats.cs
     public float attackInterval = 2.0f; // Attack speed
     public Slider attackProgressBar; // Progress Bar UI
     private Monster currentMonster;
+    public MonsterSpawner monsterSpawner;
 
     void Start()
     {
+        playerStats = FindFirstObjectByType<PlayerStats>();  //Initialize PlayerStats.cs functions here'
+        monsterSpawner = FindFirstObjectByType<MonsterSpawner>(); //Initialize MonsterSpawner.cs'
         if (attackProgressBar != null)
-            attackProgressBar.value = 0; // Start empty
+            attackProgressBar.value = 0; // Start empty (later a variable can be used to simulate advantage like sneak attack)
 
         StartCoroutine(AttackLoop());
     }
 
-    IEnumerator AttackLoop()
+IEnumerator AttackLoop()
+{
+    while (true) // Ensure this runs indefinitely until stopped
     {
-        while (true)
+        List<Monster> activeMonsters = monsterSpawner.GetActiveMonsters(); // Get all active monsters
+        Debug.Log(activeMonsters.Count);
+        if (activeMonsters.Count > 0)
         {
-            FindMonster(); // Always check for a new monster
+            Monster targetMonster = activeMonsters[0]; // Get the first monster from the list (default and ONLY targeting behavior for now)
 
-            if (currentMonster != null && currentMonster.gameObject.activeSelf)
+            if (targetMonster != null && targetMonster.gameObject.activeSelf)
             {
-                yield return StartCoroutine(FillProgressBar());
-                currentMonster.TakeDamage(attackDamage);
-            }
-            else
-            {
-                yield return null; // Wait before checking again
+                currentMonster = targetMonster; // Update current monster reference
+
+                yield return StartCoroutine(FillProgressBar()); // Wait for the progress bar to fill
+                currentMonster.TakeDamage(playerStats.GetAttackPower(), currentMonster.nameOfSpecies); // Attack the monster directly
             }
         }
-    }
-
-    void FindMonster()
-    {
-        if (currentMonster == null || !currentMonster.gameObject.activeSelf)
+        else
         {
-            currentMonster = Object.FindFirstObjectByType<Monster>(); // Find new slime
+            yield return new WaitForSeconds(1); // Wait before checking again if no active monster
         }
     }
-
+}
     IEnumerator FillProgressBar()
     {
         float timer = 0;

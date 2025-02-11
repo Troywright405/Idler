@@ -4,6 +4,7 @@ using TMPro; // Import TextMeshPro namespace
 public class PlayerStats : MonoBehaviour
 {
     public int maxHealth = 100;
+    public int baseAttackPower = 10; //Use as base value, level ups should be run through a function to calculate modifiers. Purpose of retaining base is to allow more versatile attack bonuses/buffs
     public int currentHealth;
     public int experience = 0;
     public int totalDamageTaken = 0;
@@ -37,6 +38,12 @@ public class PlayerStats : MonoBehaviour
         healthText.text = "Health: " + currentHealth + "/" + maxHealth;
         experienceText.text = "EXP: " + experience;
         damageTakenText.text = "Total Damage Taken: " + totalDamageTaken;
+    }
+    public int GetAttackPower()
+    {
+        //Later, you can add in math for various modifiers here
+        int Damage = baseAttackPower;
+        return Damage;
     }
 }
 
