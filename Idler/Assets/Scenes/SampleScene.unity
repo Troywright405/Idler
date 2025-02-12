@@ -1185,6 +1185,7 @@ MonoBehaviour:
   healthText: {fileID: 1399866236}
   experienceText: {fileID: 750870694}
   damageTakenText: {fileID: 760381277}
+  monsterNameText: {fileID: 0}
 --- !u!4 &1358197421
 Transform:
   m_ObjectHideFlags: 0
