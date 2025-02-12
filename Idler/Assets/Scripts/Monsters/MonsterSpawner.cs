@@ -11,9 +11,10 @@ public class MonsterSpawner : MonoBehaviour
     private List<Monster> activeMonsters = new();  // Tracks all active/alive monsters using Monster.cs class
     public int maxMonsters = 5; // Maximum number of monsters that can be spawned at once
     private bool monsterSpawnsEnabled = true;
-
+    private PlayerStats ps;
     void Start()
     {
+        ps = FindFirstObjectByType<PlayerStats>();
         StartCoroutine(RespawnMonster()); //Avoid instant spawn that was here before with proper respawn timer
     }
 
@@ -28,6 +29,7 @@ public class MonsterSpawner : MonoBehaviour
         //newMonster.UpdateLog($"A wild {newMonster.nameOfSpecies} appears! HP: {newMonster.currentHealth}/{newMonster.maxHealth}");
         BattleLogManager.Instance.AddLogLine($"A wild {newMonster.nameOfSpecies} appears! HP: {newMonster.currentHealth}/{newMonster.maxHealth}");
         newMonster.logText = logText; // Pass logText to the new monster
+        ps.monsterNameText.text = newMonster.nameOfSpecies;
         }
         else
         {

@@ -12,13 +12,28 @@ public class PlayerStats : MonoBehaviour
     public TMP_Text healthText;
     public TMP_Text experienceText;
     public TMP_Text damageTakenText;
+    public TMP_Text monsterNameText;
 
     void Start()
     {
+        FixDPIScalingWin11();
         currentHealth = maxHealth;
         UpdateUI();
     }
+    private void FixDPIScalingWin11() //Windows 11 has anchoring problems
+    {
+        UnityEngine.UI.CanvasScaler scaler = FindAnyObjectByType<UnityEngine.UI.CanvasScaler>();
+        if (scaler != null)
+        {
+            float dpi = Screen.dpi;
+            if (dpi == 0) dpi = 96; // Default DPI if unknown
 
+            float systemScale = dpi / 96f; // Normalize to 100% DPI
+            scaler.scaleFactor = systemScale;
+
+            Debug.Log($"DPI: {dpi}, System Scale: {systemScale}, New Scale Factor: {scaler.scaleFactor}");
+        }
+    }
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;

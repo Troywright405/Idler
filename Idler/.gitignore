@@ -60,6 +60,23 @@ sysinfo.txt
 *.aab
 *.unitypackage
 *.app
+*.exe
+*.dll
+*.so
+*.a
+
+# large files
+*.mp4
+*.mov
+*.avi
+*.wav
+*.flac
+*.zip
+*.tar
+*.rar
+*.7z
+
+idler-release/
 
 # Crashlytics generated file
 crashlytics-build.properties
