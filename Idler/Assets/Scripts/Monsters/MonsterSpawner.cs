@@ -25,7 +25,8 @@ public class MonsterSpawner : MonoBehaviour
         Monster newMonster = monsterObject.GetComponent<Monster>();
         newMonster.onMonsterDeath += HandleMonsterDeath; // Subscribe to death event
         activeMonsters.Add(newMonster);
-        newMonster.UpdateLog($"A wild {newMonster.nameOfSpecies} appears! HP: {newMonster.currentHealth}/{newMonster.maxHealth}");
+        //newMonster.UpdateLog($"A wild {newMonster.nameOfSpecies} appears! HP: {newMonster.currentHealth}/{newMonster.maxHealth}");
+        BattleLogManager.Instance.AddLogLine($"A wild {newMonster.nameOfSpecies} appears! HP: {newMonster.currentHealth}/{newMonster.maxHealth}");
         newMonster.logText = logText; // Pass logText to the new monster
         }
         else
