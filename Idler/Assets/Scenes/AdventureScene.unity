@@ -206,7 +206,7 @@ GameObject:
   - component: {fileID: 153411645}
   - component: {fileID: 153411644}
   m_Layer: 5
-  m_Name: Enemy Name
+  m_Name: EnemyNameText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1182,9 +1182,9 @@ MonoBehaviour:
   currentHealth: 0
   experience: 0
   totalDamageTaken: 0
-  healthText: {fileID: 1399866236}
-  experienceText: {fileID: 750870694}
-  damageTakenText: {fileID: 760381277}
+  healthText: {fileID: 0}
+  experienceText: {fileID: 0}
+  damageTakenText: {fileID: 0}
   monsterNameText: {fileID: 0}
 --- !u!4 &1358197421
 Transform:
@@ -1236,6 +1236,7 @@ MonoBehaviour:
   logText: {fileID: 1216999921}
   respawnTime: 1
   maxMonsters: 5
+  activeMonster: {fileID: 0}
 --- !u!4 &1376102603
 Transform:
   m_ObjectHideFlags: 0
@@ -1629,7 +1630,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 1
+  m_UiScaleMode: 0
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 1920, y: 1080}
@@ -1758,8 +1759,8 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
-  m_Antialiasing: 0
+  m_RenderPostProcessing: 1
+  m_Antialiasing: 1
   m_AntialiasingQuality: 2
   m_StopNaN: 0
   m_Dithering: 0
