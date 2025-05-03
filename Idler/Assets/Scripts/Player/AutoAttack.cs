@@ -1,60 +1,107 @@
 using UnityEngine;
-using System.Collections;
 using UnityEngine.UI;
+using System.Collections;
 using System.Collections.Generic;
 
 public class AutoAttack : MonoBehaviour
 {
-    private PlayerStats playerStats; //Initialize PlayerStats.cs functions in this class
-    //public int attackDamage = 10; //*****This should be removed, already exists in PlayerStats.cs
-    public float attackInterval = 2.0f; // Attack speed
-    public Slider attackProgressBar; // Progress Bar UI
+    private PlayerStats playerStats;
+    public float attackInterval = 2.0f;
+    public Slider attackProgressBar;
     private Monster currentMonster;
     public MonsterSpawner monsterSpawner;
 
+    private bool isCombatActive = false;
+    private Coroutine attackCoroutine; // Reference to the running coroutine
+    public Slider AttackProgressBar => attackProgressBar; //allows playerstats to read it, for location for dynamic button
+
     void Start()
     {
-        playerStats = FindFirstObjectByType<PlayerStats>();  //Initialize PlayerStats.cs functions here'
-        monsterSpawner = FindFirstObjectByType<MonsterSpawner>(); //Initialize MonsterSpawner.cs'
-        if (attackProgressBar != null)
-            attackProgressBar.value = 0; // Start empty (later a variable can be used to simulate advantage like sneak attack)
-
-        StartCoroutine(AttackLoop());
+        playerStats = FindFirstObjectByType<PlayerStats>();
+        monsterSpawner = FindFirstObjectByType<MonsterSpawner>();
+        attackProgressBar = GameObject.Find("AttackProgressBar")?.GetComponent<Slider>();
+        
     }
 
-IEnumerator AttackLoop()
-{
-    while (true) // Ensure this runs indefinitely until stopped
+    public void ToggleCombat()
     {
-        List<Monster> activeMonsters = monsterSpawner.GetActiveMonsters(); // Get all active monsters
-        Debug.Log(activeMonsters.Count);
-        if (activeMonsters.Count > 0)
+        Debug.Log($"Combat Toggled: {isCombatActive}");
+        if (isCombatActive)
         {
-            Monster targetMonster = activeMonsters[0]; // Get the first monster from the list (default and ONLY targeting behavior for now)
-
-            if (targetMonster != null && targetMonster.gameObject.activeSelf)
-            {
-                currentMonster = targetMonster; // Update current monster reference
-
-                yield return StartCoroutine(FillProgressBar()); // Wait for the progress bar to fill
-                currentMonster.TakeDamage(playerStats.GetAttackPower(), currentMonster.nameOfSpecies); // Attack the monster directly
-            }
+            StopCombat();
         }
         else
         {
-            yield return new WaitForSeconds(1); // Wait before checking again if no active monster
+            StartCombat();
         }
     }
-}
+
+    public void StartCombat()
+    {
+        if (!isCombatActive)
+        {
+            isCombatActive = true;
+            attackCoroutine = StartCoroutine(AttackLoop());
+        }
+    }
+
+    public void StopCombat()
+    {
+        if (isCombatActive)
+        {
+            isCombatActive = false;
+            if (attackCoroutine != null)
+                StopCoroutine(attackCoroutine);
+            attackProgressBar.value = 0; // Reset the bar
+        }
+    }
+
+    IEnumerator AttackLoop()
+    {
+        while (isCombatActive)
+        {
+            List<Monster> activeMonsters = monsterSpawner.GetActiveMonsters();
+            if (activeMonsters.Count > 0)
+            {
+                Monster targetMonster = activeMonsters[0];
+                if (targetMonster != null && targetMonster.gameObject.activeSelf)
+                {
+                    currentMonster = targetMonster;
+                    yield return StartCoroutine(FillProgressBar());
+                    //HARD CODED melee only (until other classes are implemented), later need to check what type of attack it was
+                    currentMonster.TakeDamage(playerStats.CombatStats.AttackPowerMelee, currentMonster.nameOfSpecies);
+                    if (currentMonster.currentHealth <= 0)
+                    {
+                        OnMonsterKill(currentMonster.experienceReward);
+                    }
+                    playerStats.TakeDamage(currentMonster.attackPowerMelee);
+                }
+            }
+            else
+            {
+                yield return new WaitForSeconds(1);
+            }
+        }
+    }
+    public void OnMonsterKill(int monsterExperience)
+    {
+        if (playerStats != null)
+        {
+            //playerStats.GainExperience(monsterExperience);  // Pass the monster's XP to PlayerStats
+            //Used for xp reward until I realized this is already in the Die() method in MonsterSpawner
+        }
+    }
+
     IEnumerator FillProgressBar()
     {
         float timer = 0;
         while (timer < attackInterval)
         {
+            if (!isCombatActive) yield break; // Abort early if combat stops
             timer += Time.deltaTime;
-            attackProgressBar.value = timer / attackInterval; // Update progress
+            attackProgressBar.value = timer / attackInterval;
             yield return null;
         }
-        attackProgressBar.value = 0; // Reset after attack
+        attackProgressBar.value = 0;
     }
 }

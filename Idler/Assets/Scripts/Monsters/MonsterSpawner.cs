@@ -1,3 +1,4 @@
+//MonsterSpawner.cs
 using UnityEngine;
 using TMPro;
 using System.Collections;
@@ -30,7 +31,7 @@ public class MonsterSpawner : MonoBehaviour
             activeMonsters.Add(activeMonster);
             BattleLogManager.Instance.AddLogLine($"A wild {activeMonster.nameOfSpecies} appears! HP: {activeMonster.currentHealth}/{activeMonster.maxHealth}");
             activeMonster.logText = logText; // Pass logText to the new monster
-            PlayerStats.Instance.monsterNameText.text = "";//activeMonster.nameOfSpecies; // Update the monster's name text on PlayerStats
+            GameManager.Instance.UpdateUI(GameManager.UIFlag.monsterName); //activeMonster.nameOfSpecies; // Update the monster's name text on PlayerStats
         }
     }
 
