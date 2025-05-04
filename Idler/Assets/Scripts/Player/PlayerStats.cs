@@ -1,142 +1,104 @@
+// PlayerStats.cs
+using System.Collections;
 using UnityEngine;
-using TMPro; // Import TextMeshPro namespace 
+public enum PlayerClass
+{
+    Warrior,
+    Archer,
+    Mage
+}
 
-public class PlayerStats : MonoBehaviour
+public class PlayerStats : CharacterStats
 {
     public static PlayerStats Instance { get; private set; }
-    public int maxHealth = 100;
-    public int baseAttackPower = 10; //Use as base value, level ups should be run through a function to calculate modifiers. Purpose of retaining base is to allow more versatile attack bonuses/buffs
-    public int currentHealth;
-    public int experience = 0;
-    public int totalDamageTaken = 0;
 
-    public TMP_Text healthText;
-    public TMP_Text experienceText;
-    public TMP_Text damageTakenText;
-    public TMP_Text monsterNameText;
-    public enum UIFlag //Flags to pass to UpdateUI based on what needs updated. Performance boost (big)
+    public CombatStatStructure CombatStats { get; private set; }
+    public BaseStats baseStats;
+    public new Experience Experience { get; protected set; }
+    public int totalDamageTaken; //dumb stat but we can keep for now
+
+    private Coroutine regenCoroutine;
+
+    protected override void Awake()
     {
-        All,
-        hp,
-        xp,
-        damageTaken,
-        monsterName
+        base.Awake();
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+        Experience = new Experience();
     }
-    void Awake()
-{
-    if (Instance == null)
-    {
-        Instance = this;
-    }
-    else
-    {
-        Destroy(gameObject); // Ensure only one instance exists
-    }
-}
+
     void Start()
     {
-        FixDPIScalingWin11();
-        currentHealth = maxHealth;
-        healthText = GameObject.Find("HealthText").GetComponent<TMP_Text>();
-        experienceText = GameObject.Find("DamageTakenText").GetComponent<TMP_Text>();
-        damageTakenText = GameObject.Find("ExperienceText").GetComponent<TMP_Text>();
-        monsterNameText = GameObject.Find("EnemyNameText").GetComponent<TMP_Text>();
-        UpdateUI(UIFlag.All);
+        Health = new Health(100, 1); //hard coded starting health and level for now
+        Experience = new Experience(); //Object from CharacterStats
+
+        SetStatsBasedOnClass();
+        StartCoroutine(DelayedInit());
+        StartHealthRegen();
     }
-    private void FixDPIScalingWin11() //Windows 11 has anchoring problems
+
+    private IEnumerator DelayedInit()
     {
-        UnityEngine.UI.CanvasScaler scaler = FindAnyObjectByType<UnityEngine.UI.CanvasScaler>();
-        if (scaler != null)
-        {
-            float dpi = Screen.dpi;
-            if (dpi == 0) dpi = 96; // Default DPI if unknown
-
-            float systemScale = dpi / 96f; // Normalize to 100% DPI
-            scaler.scaleFactor = systemScale;
-
-            Debug.Log($"DPI: {dpi}, System Scale: {systemScale}, New Scale Factor: {scaler.scaleFactor}");
-        }
+        yield return null;
+        GameManager.Instance.UpdateUI(GameManager.UIFlag.All);
     }
+
+    private void SetStatsBasedOnClass()
+    {
+        characterClass = PlayerClass.Warrior; // Hardcoded default
+        baseStats = new BaseStats(characterClass);
+
+        CombatStats = baseStats.CalculateStatsAtLevel(Experience.Level);
+        ApplyCombatStats();
+    }
+
     public void TakeDamage(int damage)
     {
-        currentHealth -= damage;
-        totalDamageTaken += damage;
-        if (currentHealth < 0) currentHealth = 0;
-        UpdateUI(UIFlag.hp);
-
+        Health.TakeDamage(damage);
+        GameManager.Instance.UpdateUI(GameManager.UIFlag.hp);
     }
 
     public void GainExperience(int amount)
     {
-        experience += amount;
-        UpdateUI(UIFlag.xp);
+        if (Experience.AddXP(amount)) // If level-up happened
+        {
+            HandleLevelUp(Experience.Level, null); // Apply new level stats
+        }
+
+        GameManager.Instance.UpdateUI(GameManager.UIFlag.xp); // Update XP UI
     }
 
-    public void UpdateUI(UIFlag flag)
+    protected override void HandleLevelUp(int newLevel, CombatStatStructure newStats)
     {
-        if (flag == UIFlag.All)
-        {
-            healthText.text = "Health: " + currentHealth + "/" + maxHealth;
-            experienceText.text = "EXP: " + experience;
-            damageTakenText.text = "Total Damage Taken: " + totalDamageTaken;
-            UpdateMonsterName();
-            return; // Exit after updating everything
-        }
-        // Update a single flag (similar to the array method, but just one)
-        switch (flag)
-        {
-            case UIFlag.hp:
-                healthText.text = "Health: " + currentHealth + "/" + maxHealth;
-                break;
-            case UIFlag.xp:
-                experienceText.text = "EXP: " + experience;
-                break;
-            case UIFlag.damageTaken:
-                damageTakenText.text = "Total Damage Taken: " + totalDamageTaken;
-                break;
-            case UIFlag.monsterName:
-                UpdateMonsterName();
-                break;
-        }
+        // Update combat stats on level-up
+        CombatStats = baseStats.CalculateStatsAtLevel(newLevel);
+        ApplyCombatStats();
+        GameManager.Instance.UpdateUI(GameManager.UIFlag.All); // Update full UI
     }
 
-    public void UpdateUI(UIFlag[] flags)
+    private void ApplyCombatStats()
     {
-        // Update multiple flags in an array
-        foreach (UIFlag flag in flags)
+        Health.MaxHealth = CombatStats.Health;
+        //maybe add more here
+    }
+
+    public void StartHealthRegen()
+    {
+        if (regenCoroutine == null)
+            regenCoroutine = StartCoroutine(RegenLoop());
+    }
+
+    private IEnumerator RegenLoop()
+    {
+        while (true)
         {
-            switch (flag)
+            yield return new WaitForSeconds(1f);
+            if (Health.Current < Health.MaxHealth)
             {
-                case UIFlag.hp:
-                    healthText.text = "Health: " + currentHealth + "/" + maxHealth;
-                    break;
-                case UIFlag.xp:
-                    experienceText.text = "EXP: " + experience;
-                    break;
-                case UIFlag.damageTaken:
-                    damageTakenText.text = "Total Damage Taken: " + totalDamageTaken;
-                    break;
-                case UIFlag.monsterName:
-                    UpdateMonsterName();
-                    break;
+                int regenAmount = Mathf.CeilToInt(Health.MaxHealth * 0.01f);
+                Health.Heal(regenAmount);
+                GameManager.Instance.UpdateUI(GameManager.UIFlag.hp);
             }
         }
     }
-    public int GetAttackPower()
-    {
-        int Damage = baseAttackPower; //Later, you can add in math for various modifiers here
-        return Damage;
-    }
-    private void UpdateMonsterName()
-    {
-        if (MonsterSpawner.Instance != null && MonsterSpawner.Instance.activeMonster != null) //Make sure there's an active monster at all
-        {
-            monsterNameText.text = "Current Monster: " + MonsterSpawner.Instance.activeMonster.nameOfSpecies;
-        }
-        else
-        {
-            monsterNameText.text = ""; // Default text if no active monster
-        }
-    }
 }
-
