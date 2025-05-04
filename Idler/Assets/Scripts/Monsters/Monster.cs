@@ -40,7 +40,6 @@ public class Monster : MonoBehaviour //Right now Monsters directly become game o
         currentHealth = maxHealth;
         playerStats = FindFirstObjectByType<PlayerStats>(); // Correct method
     }
-
     public virtual void TakeDamage(int damage, string monsterName)
     {
         currentHealth -= damage;
@@ -51,7 +50,6 @@ public class Monster : MonoBehaviour //Right now Monsters directly become game o
             Die(monsterName);
         }
     }
-
     void Die(string monsterName)
     {
         if (playerStats != null)
@@ -62,10 +60,22 @@ public class Monster : MonoBehaviour //Right now Monsters directly become game o
 
         onMonsterDeath?.Invoke(this);
     }
-
     public virtual void UpdateLog(string message)
     {
         if (logText != null)
             logText.text += "\n" + message; // Append new logs
     }
+    public float GetHealthPercent()
+    {
+        if (maxHealth == 0) return 0f; //avoids divide by 0 crash in case other code later doesn't account for 0 max hp
+        return (float)currentHealth / maxHealth;
+    }   
+    public string GetStatsSummary()
+    {
+        return
+            $"HP: {maxHealth}\n" +
+            $"Melee Atk: {attackPowerMelee}\n" +
+            $"Melee Def: {defenseMelee}";
+    }
+
 }

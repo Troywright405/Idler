@@ -12,9 +12,9 @@ public class PlayerStats : CharacterStats
 {
     public static PlayerStats Instance { get; private set; }
 
-    public CombatStatStructure CombatStats { get; private set; }
+    public CombatStatStructure CombatStats { get; private set; } //This is where genuine instance data is stored, this is NOT for compute. XP/Lv is in Experience
     public BaseStats baseStats;
-    public new Experience Experience { get; protected set; }
+    public new Experience Experience { get; protected set; } //Genuine player data stored, but also compute because I was too lazy to separate it so far
     public int totalDamageTaken; //dumb stat but we can keep for now
 
     private Coroutine regenCoroutine;
@@ -100,5 +100,11 @@ public class PlayerStats : CharacterStats
                 GameManager.Instance.UpdateUI(GameManager.UIFlag.hp);
             }
         }
+    }
+    public string GetStatsSummary() //String builder for UI
+    {
+        return
+            $"Melee Atk: {CombatStats.AttackPowerMelee}\n" +
+            $"Melee Def: {CombatStats.DefensePowerMelee}";
     }
 }
