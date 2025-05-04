@@ -31,7 +31,9 @@ public class MonsterSpawner : MonoBehaviour
             activeMonsters.Add(activeMonster);
             BattleLogManager.Instance.AddLogLine($"A wild {activeMonster.nameOfSpecies} appears! HP: {activeMonster.currentHealth}/{activeMonster.maxHealth}");
             activeMonster.logText = logText; // Pass logText to the new monster
+            GameManager.Instance.SetActiveMonster(activeMonster);
             GameManager.Instance.UpdateUI(GameManager.UIFlag.monsterName); //activeMonster.nameOfSpecies; // Update the monster's name text on PlayerStats
+            GameManager.Instance.UpdateUI(GameManager.UIFlag.statsMonster);
         }
     }
 
@@ -43,6 +45,9 @@ public class MonsterSpawner : MonoBehaviour
             Destroy(deadMonster.gameObject);
             activeMonster=null;
         }
+        GameManager.Instance.UpdateUI(GameManager.UIFlag.monsterName);
+        GameManager.Instance.UpdateUI(GameManager.UIFlag.hpEnemy);
+        GameManager.Instance.UpdateUI(GameManager.UIFlag.statsMonster);
         StartCoroutine(RespawnMonster());
     }
 
