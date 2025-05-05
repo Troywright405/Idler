@@ -103,8 +103,18 @@ public class PlayerStats : CharacterStats
     }
     public string GetStatsSummary() //String builder for UI
     {
-        return
-            $"Melee Atk: {CombatStats.AttackPowerMelee}\n" +
-            $"Melee Def: {CombatStats.DefensePowerMelee}";
+        if (CurrencyManager.Instance != null)
+        {
+            return
+                $"Gold: {CurrencyManager.Instance.GetTotalGold()}\n" +
+                $"Melee Atk: {CombatStats.AttackPowerMelee}\n" +
+                $"Melee Def: {CombatStats.DefensePowerMelee}";
+        }
+        else
+        {
+            return $"Gold:\n" + // Default to 0 if CurrencyManager is not initialized
+               $"Melee Atk: {CombatStats.AttackPowerMelee}\n" +
+               $"Melee Def: {CombatStats.DefensePowerMelee}";
+        }
     }
 }

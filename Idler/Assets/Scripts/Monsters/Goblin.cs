@@ -25,8 +25,13 @@ public class Goblin : Monster
         courage = 5;
         description = "A small but cunning creature that relies on numbers and trickery to win fights.";
     }
-    public override void TakeDamage(int damage, string nameOfSpecies = "???")
+    public override void TakeDamage(int damage, string nameOfSpecies)
     {
         base.TakeDamage(damage,nameOfSpecies);
+    }
+    public override void InitializeDropTable()
+    {
+        dropTable = new MonsterDropTable();
+        dropTable.AddDrop("Gold", 1.0f);
     }
 }

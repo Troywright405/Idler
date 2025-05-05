@@ -25,8 +25,13 @@ public class Orc : Monster
         description = "A large, brutish creature often found in swarms. Known for raw strength and relentless attacks.";
     }
 
-    public override void TakeDamage(int damage, string nameOfSpecies = "???")
+    public override void TakeDamage(int damage, string nameOfSpecies)
     {
         base.TakeDamage(damage,nameOfSpecies);
+    }
+    public override void InitializeDropTable()
+    {
+        dropTable = new MonsterDropTable();
+        dropTable.AddDrop("Gold", 1.0f);
     }
 }

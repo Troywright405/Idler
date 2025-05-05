@@ -22,8 +22,13 @@ public class Slime : Monster
         courage = 1;
         description = "A weak, gelatinous creature that barely holds its form together.";
     }
-    public override void TakeDamage(int damage, string nameOfSpecies = "???")
+    public override void TakeDamage(int damage, string nameOfSpecies)
     {
         base.TakeDamage(damage,nameOfSpecies);
+    }
+    public override void InitializeDropTable()
+    {
+        dropTable = new MonsterDropTable();
+        dropTable.AddDrop("Gold", 1.0f);
     }
 }

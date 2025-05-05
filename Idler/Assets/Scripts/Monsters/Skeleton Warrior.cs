@@ -25,8 +25,13 @@ public class SkeletonWarrior : Monster
         description = "Reanimated bones of the fallen. These warriors lack magic but excel in physical combat.";
     }
 
-    public override void TakeDamage(int damage, string nameOfSpecies = "???")
+    public override void TakeDamage(int damage, string nameOfSpecies)
     {
         base.TakeDamage(damage,nameOfSpecies);
+    }
+    public override void InitializeDropTable()
+    {
+        dropTable = new MonsterDropTable();
+        dropTable.AddDrop("Gold", 1.0f);
     }
 }
