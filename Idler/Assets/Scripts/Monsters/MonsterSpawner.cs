@@ -1,4 +1,3 @@
-//MonsterSpawner.cs
 using UnityEngine;
 using TMPro;
 using System.Collections;
@@ -48,6 +47,8 @@ public class MonsterSpawner : MonoBehaviour
         GameManager.Instance.UpdateUI(GameManager.UIFlag.monsterName);
         GameManager.Instance.UpdateUI(GameManager.UIFlag.hpEnemy);
         GameManager.Instance.UpdateUI(GameManager.UIFlag.statsMonster);
+        GameManager.Instance.UpdateUI(GameManager.UIFlag.currency);
+        LootManager.Instance.HandleMonsterDrops(deadMonster);
         StartCoroutine(RespawnMonster());
     }
 

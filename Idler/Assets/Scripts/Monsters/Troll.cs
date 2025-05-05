@@ -25,8 +25,13 @@ public class Troll : Monster
         description = "A hulking brute with immense strength and regenerative abilities. Known for its ferocity in battle.";
     }
 
-    public override void TakeDamage(int damage, string nameOfSpecies = "???")
+    public override void TakeDamage(int damage, string nameOfSpecies)
     {
         base.TakeDamage(damage,nameOfSpecies);
+    }
+    public override void InitializeDropTable()
+    {
+        dropTable = new MonsterDropTable();
+        dropTable.AddDrop("Gold", 1.0f);
     }
 }

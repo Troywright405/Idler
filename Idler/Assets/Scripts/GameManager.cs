@@ -27,7 +27,7 @@ public class GameManager : MonoBehaviour
     private bool isCombatActive = false;
     public bool IsCombatActive => isCombatActive; //exposes a copy public, not original
 
-    public enum UIFlag { All, hp, xp, lv, damageTaken, monsterName, hpEnemy, statsPlayer, statsMonster }
+    public enum UIFlag { All, hp, xp, lv, damageTaken, monsterName, hpEnemy, statsPlayer, statsMonster, currency }
 
     void Awake()
     {
@@ -39,6 +39,10 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject); // Ensures only one GameManager exists
         }
+        if (CurrencyManager.Instance != null)
+        {
+            CurrencyManager.Instance.CurrencyChanged += OnCurrencyChanged;
+        }  
     }
 
     void Start()
@@ -62,17 +66,12 @@ public class GameManager : MonoBehaviour
         CombatToggleButtonRectTransform = CombatToggleButton.GetComponent<RectTransform>();
         autoAttack = FindFirstObjectByType<AutoAttack>();
         // Update the UI once everything is set up
-        UpdateUI(UIFlag.All);
+        DelayedInit();
     }
     private IEnumerator DelayedInit()
     {
         yield return new WaitForEndOfFrame();
 
-        CombatToggleButton = GameObject.Find("CombatToggleButton").GetComponent<Button>();
-        CombatToggleButton.onClick.AddListener(CombatToggle);
-
-        CombatToggleButtonRectTransform = CombatToggleButton.GetComponent<RectTransform>();
-        PlayerStats = PlayerStats.Instance;
         UpdateUI(UIFlag.All);
     }
 
@@ -93,6 +92,11 @@ public class GameManager : MonoBehaviour
         //isCombatActive = !isCombatActive;
         autoAttack.ToggleCombat();
     }
+    private void OnCurrencyChanged(int newGoldAmount)
+    {
+        UpdateUI(UIFlag.currency);
+    }
+
 
     public void UpdateUI(UIFlag flag)
     {
@@ -112,6 +116,7 @@ public class GameManager : MonoBehaviour
                 UpdateUI(UIFlag.hpEnemy);
                 UpdateUI(UIFlag.statsPlayer);
                 UpdateUI(UIFlag.statsMonster);
+                UpdateUI(UIFlag.currency);
                 break;
 
             case UIFlag.hp:
@@ -158,6 +163,7 @@ public class GameManager : MonoBehaviour
             }
             break;
             case UIFlag.statsPlayer:
+            case UIFlag.currency:
             {
                 playerStatsText.text=PlayerStats.Instance.GetStatsSummary();
             }
@@ -166,7 +172,6 @@ public class GameManager : MonoBehaviour
             if (enemyStatsText != null && activeMonster != null) //Won't always be an activeonster, so check first
                 enemyStatsText.text = activeMonster.GetStatsSummary();
             break;
-
         }
     }
 
