@@ -56,11 +56,11 @@ public class ItemManager : MonoBehaviour
     }
 
     // You could extend the ItemManager to also handle adding/removing items from player's inventory
-    public void AddItemToInventory(Item item, PlayerInventory inventory)
+    public void AddItemToInventory(Item item, Inventory inventory)
     {
         if (inventory != null && item != null)
         {
-            inventory.AddItem(item);
+            inventory.AddItem(item.itemName);
         }
     }
 }
