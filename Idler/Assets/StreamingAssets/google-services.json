@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "521705320492",
+    "project_id": "idler-6124e",
+	"firebase_url": "https://idler-6124e.firebaseio.com",
+    "storage_bucket": "idler-6124e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:521705320492:android:69120f27172ddbb740e189",
+        "android_client_info": {
+          "package_name": "com.yourcompany.idler.desktop"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "521705320492-p8s0p34nm785kunb9esrkjp5mfs8mkoc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAohVGcKiLcpQHQqF52lXemd-wRf2Obnf8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "521705320492-p8s0p34nm785kunb9esrkjp5mfs8mkoc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

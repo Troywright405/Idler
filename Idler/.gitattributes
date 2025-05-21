@@ -1,2 +1,9 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+*.py text eol=crlf
+*.sh text eol=crlf
+*.cs text eol=crlf
+*.js text eol=crlf
+*.tf text eol=crlf
+*.yml text eol=crlf
+*.md text eol=crlf
