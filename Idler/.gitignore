@@ -87,3 +87,16 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+#Personal link to save dir, later will add dynamic generation at runtime for all users
+Save Dir.lnk
+
+#Secret file from google
+client_secret_*
+
+Assets/Firebase/
+Assets/ExternalDependencyManager/
+Assets/Editor Default Resources/
+Assets/Plugins/
+
+FirebaseAuth.unitypackage
