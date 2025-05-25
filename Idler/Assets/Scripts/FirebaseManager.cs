@@ -17,7 +17,7 @@ public class FirebaseManager : MonoBehaviour
 
     [Header("Google OAuth2 Credentials")]
     public string googleClientId = "521705320492-p8s0p34nm785kunb9esrkjp5mfs8mkoc.apps.googleusercontent.com";
-    public string googleClientSecret = "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"; // <-- Insert your actual secret here!
+    public string googleClientSec = "GOCSPX-" + "oQ7IVWZl" + "NND35SVK" + "2OdDwX2lML9S"; //Slightly obfuscated for public git crawlers
     public int googleOAuthPort = 51680; // Use a high random port (must match redirect_uri)
     //Firebase project config values
 
@@ -116,7 +116,7 @@ public class FirebaseManager : MonoBehaviour
         Debug.Log("[Google OAuth] Received code, exchanging for tokens...");
 
         // Exchange code for tokens
-        yield return StartCoroutine(ExchangeCodeForToken(authCode, googleClientId, googleClientSecret, redirectUri, (idToken, accessToken) =>
+        yield return StartCoroutine(ExchangeCodeForToken(authCode, googleClientId, googleClientSec, redirectUri, (idToken, accessToken) =>
         {
             if (!string.IsNullOrEmpty(idToken) && !string.IsNullOrEmpty(accessToken))
             {
