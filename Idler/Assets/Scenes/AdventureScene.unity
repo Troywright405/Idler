@@ -262,11 +262,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1224936447}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
+  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: -70}
   m_SizeDelta: {x: 600, y: 50}
-  m_Pivot: {x: 0, y: 1}
+  m_Pivot: {x: 1, y: 1}
 --- !u!114 &152552782
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -838,7 +838,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   googleClientId: 521705320492-p8s0p34nm785kunb9esrkjp5mfs8mkoc.apps.googleusercontent.com
-  googleClientSecret: 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
+  googleClientSec: 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
   googleOAuthPort: 51680
 --- !u!4 &197379332
 Transform:
@@ -886,11 +886,11 @@ RectTransform:
   - {fileID: 1949946473}
   m_Father: {fileID: 1224936447}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
+  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: -70}
   m_SizeDelta: {x: 600, y: 50}
-  m_Pivot: {x: 0, y: 1}
+  m_Pivot: {x: 1, y: 1}
 --- !u!1 &271343130
 GameObject:
   m_ObjectHideFlags: 0
@@ -935,7 +935,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &373380278
+--- !u!1 &274746922
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -943,134 +943,42 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 373380280}
-  - component: {fileID: 373380279}
+  - component: {fileID: 274746924}
+  - component: {fileID: 274746923}
   m_Layer: 0
-  m_Name: Slime
+  m_Name: MonsterManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &373380279
+--- !u!114 &274746923
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 373380278}
+  m_GameObject: {fileID: 274746922}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 392ac1186e5c491448eed2605de496b0, type: 3}
+  m_Script: {fileID: 11500000, guid: 6a9380b7b3dfaa94fbf9573c34922994, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nameOfSpecies: Slime
-  namePersonal: 
-  level: 0
-  maxHealth: 20
-  currentHealth: 0
-  attackPowerMelee: 5
-  attackPowerRanged: 0
-  attackPowerMagic: 2
-  defenseMelee: 2
-  defenseRanged: 1
-  defenseMagic: 3
-  hitRateMelee: 0.7
-  hitRateRanged: 0
-  hitRateMagic: 0.5
-  evasionMelee: 0.2
-  evasionRanged: 0.1
-  evasionMagic: 0.3
-  attackSpeed: 1.2
-  movementSpeed: 0.8
-  experienceReward: 10
-  courage: 1
-  description: A weak, gelatinous creature that barely holds its form together.
-  logText: {fileID: 1216999921}
-  predefinedDrops: []
---- !u!4 &373380280
+  MaxMonsters: 5
+--- !u!4 &274746924
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 373380278}
+  m_GameObject: {fileID: 274746922}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -602.80853, y: -203.05606, z: -4.415568}
+  m_LocalPosition: {x: 534.20154, y: 242.2638, z: 3.0909061}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1129318347}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &375520449
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 375520451}
-  - component: {fileID: 375520450}
-  m_Layer: 0
-  m_Name: Goblin
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &375520450
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 375520449}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e3c0176344744a54185cb54f1c1e5ee6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  nameOfSpecies: Goblin
-  namePersonal: 
-  level: 0
-  maxHealth: 50
-  currentHealth: 0
-  attackPowerMelee: 10
-  attackPowerRanged: 5
-  attackPowerMagic: 2
-  defenseMelee: 8
-  defenseRanged: 4
-  defenseMagic: 2
-  hitRateMelee: 0.75
-  hitRateRanged: 0.65
-  hitRateMagic: 0.5
-  evasionMelee: 0.2
-  evasionRanged: 0.15
-  evasionMagic: 0.1
-  attackSpeed: 1.2
-  movementSpeed: 1.5
-  experienceReward: 10
-  courage: 5
-  description: A small but cunning creature that relies on numbers and trickery to
-    win fights.
-  logText: {fileID: 1216999921}
-  predefinedDrops: []
---- !u!4 &375520451
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 375520449}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -602.80853, y: -203.05606, z: -4.415568}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1129318347}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &422444429
 GameObject:
@@ -1509,6 +1417,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99d3e79eebb04854e94b76882ee271c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  healthText: {fileID: 0}
+  healthBar: {fileID: 0}
 --- !u!1 &641138247
 GameObject:
   m_ObjectHideFlags: 0
@@ -2207,75 +2117,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 892394937}
   m_CullTransparentMesh: 1
---- !u!1 &909448505
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 909448507}
-  - component: {fileID: 909448506}
-  m_Layer: 0
-  m_Name: Orc
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &909448506
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 909448505}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b2f180430b0a5043bbb8fb1b99b3987, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  nameOfSpecies: Orc
-  namePersonal: 
-  level: 0
-  maxHealth: 250
-  currentHealth: 0
-  attackPowerMelee: 50
-  attackPowerRanged: 25
-  attackPowerMagic: 5
-  defenseMelee: 40
-  defenseRanged: 30
-  defenseMagic: 10
-  hitRateMelee: 0.75
-  hitRateRanged: 0.7
-  hitRateMagic: 0.6
-  evasionMelee: 0.3
-  evasionRanged: 0.2
-  evasionMagic: 0.1
-  attackSpeed: 1.2
-  movementSpeed: 1.8
-  experienceReward: 100
-  courage: 60
-  description: A large, brutish creature often found in swarms. Known for raw strength
-    and relentless attacks.
-  logText: {fileID: 1216999921}
-  predefinedDrops: []
---- !u!4 &909448507
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 909448505}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -539.89465, y: -206.49197, z: -3.0594323}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1129318347}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &965128903
 GameObject:
   m_ObjectHideFlags: 0
@@ -2831,40 +2672,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1120252160}
   m_CullTransparentMesh: 1
---- !u!1 &1129318346
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1129318347}
-  m_Layer: 0
-  m_Name: _Monsters
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1129318347
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1129318346}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 539.89465, y: 206.49197, z: 3.0594323}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 373380280}
-  - {fileID: 375520451}
-  - {fileID: 909448507}
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1186184274
 GameObject:
   m_ObjectHideFlags: 0
@@ -2930,7 +2737,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Type: 2
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -3164,7 +2971,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 0}
   m_FillRect: {fileID: 1949946473}
   m_HandleRect: {fileID: 0}
-  m_Direction: 0
+  m_Direction: 1
   m_MinValue: 0
   m_MaxValue: 1
   m_WholeNumbers: 0
@@ -3425,53 +3232,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1304058395}
   m_CullTransparentMesh: 1
---- !u!1 &1358197419
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1358197421}
-  - component: {fileID: 1358197420}
-  m_Layer: 0
-  m_Name: PlayerObject
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1358197420
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1358197419}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b164e723d82c45649872b45bbbec30f3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  characterName: 
-  characterClass: 0
-  totalDamageTaken: 0
---- !u!4 &1358197421
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1358197419}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 539.89465, y: 206.49197, z: 3.0594323}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1361246624
 GameObject:
   m_ObjectHideFlags: 0
@@ -3714,13 +3474,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 353c58ad29e436349bec2b501faf3a8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  monsterPrefabs:
-  - {fileID: 373380278}
-  - {fileID: 375520449}
   logText: {fileID: 1216999921}
   respawnTime: 1
-  maxMonsters: 5
-  activeMonster: {fileID: 0}
 --- !u!4 &1376102603
 Transform:
   m_ObjectHideFlags: 0
@@ -4511,7 +4266,7 @@ MonoBehaviour:
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
-  m_FillMethod: 4
+  m_FillMethod: 0
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
@@ -5464,7 +5219,7 @@ RectTransform:
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0, y: 1}
+  m_Pivot: {x: 1, y: 1}
 --- !u!114 &1949946474
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5856,7 +5611,6 @@ SceneRoots:
   - {fileID: 1682879020}
   - {fileID: 851927298}
   - {fileID: 486296556}
-  - {fileID: 1358197421}
   - {fileID: 1376102603}
+  - {fileID: 274746924}
   - {fileID: 1631912596}
-  - {fileID: 1129318347}

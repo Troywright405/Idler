@@ -46,13 +46,13 @@ public class BattleLogManager : MonoBehaviour
             if (battleLogQueue.Count > 0)
             {
                 // Remove the oldest log line.
-                Debug.Log("Removing log line: " + battleLogQueue.Peek());
+                //Debug.Log("Removing log line: " + battleLogQueue.Peek());
                 battleLogQueue.Dequeue();
                 UpdateLogText();
             }
             else
             {
-                Debug.Log("Battle log queue is empty.");
+                //Debug.Log("Battle log queue is empty.");
             }
             yield return new WaitForSeconds(5f);
         }

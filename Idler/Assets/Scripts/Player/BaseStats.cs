@@ -1,34 +1,59 @@
 // BaseStats.cs
-public class BaseStats
-{
-    public int BaseHealth { get; set; }
-    public int BaseAttackPowerMelee { get; set; }
-    public int BaseAttackPowerRanged { get; set; }
-    public int BaseAttackPowerMagic { get; set; }
-    public int BaseDefensePowerMelee { get; set; }
-    public int BaseDefensePowerRanged { get; set; }
-    public int BaseDefensePowerMagic { get; set; }
-    public float BaseHitRateMelee { get; set; }
-    public float BaseHitRateRanged { get; set; }
-    public float BaseHitRateMagic { get; set; }
-    public float BaseEvasionMelee { get; set; }
-    public float BaseEvasionRanged { get; set; }
-    public float BaseEvasionMagic { get; set; }
-    public float BaseAttackSpeed { get; set; }
-    public float BaseMovementSpeed { get; set; }
+// Returns basic, non-defined stats for a player as CombatStatStructure
+// Determines what all base stats are for the player during object creation or level up BEFORE all modifiers like gear, skills, allocated stat points, etc
+using System.Diagnostics;
 
-    public BaseStats(PlayerClass playerClass)
+public static class BaseStats
+{
+    public static CombatStatStructure GetStatsFor(PlayerClass playerClass)
     {
+        int BaseHealth;
+        float BaseRegen;
+        int BaseAttackPowerMelee;
+        int BaseAttackPowerRanged;
+        int BaseAttackPowerMagic;
+        int BaseDefensePowerMelee;
+        int BaseDefensePowerRanged;
+        int BaseDefensePowerMagic;
+        float BaseHitRateMelee;
+        float BaseHitRateRanged;
+        float BaseHitRateMagic;
+        float BaseEvasionMelee;
+        float BaseEvasionRanged;
+        float BaseEvasionMagic;
+        float BaseAttackSpeed;
+        float BaseMovementSpeed;
+
         switch (playerClass)
         {
+            case PlayerClass.None:
+                BaseHealth = 50;
+                BaseRegen = 0.005f; // Percentage based
+                BaseAttackPowerMelee = 65;
+                BaseAttackPowerRanged = 5;
+                BaseAttackPowerMagic = 5;
+                BaseDefensePowerMelee = 2;
+                BaseDefensePowerRanged = 2;
+                BaseDefensePowerMagic = 2;
+                BaseHitRateMelee = 0.7f;
+                BaseHitRateRanged = 0.7f;
+                BaseHitRateMagic = 0.7f;
+                BaseEvasionMelee = 0.05f;
+                BaseEvasionRanged = 0.05f;
+                BaseEvasionMagic = 0.05f;
+                BaseAttackSpeed = 1.0f;
+                BaseMovementSpeed = 1.0f;
+                break;
+
             case PlayerClass.Warrior:
                 BaseHealth = 100;
+                BaseRegen = 0.01f;
                 BaseAttackPowerMelee = 15;
                 BaseAttackPowerRanged = 10;
                 BaseAttackPowerMagic = 5;
                 BaseDefensePowerMelee = 7;
-                BaseDefensePowerMelee = 5;
-                BaseDefensePowerMelee = 5;
+                BaseDefensePowerRanged = 5;
+                BaseDefensePowerMagic = 5;
                 BaseHitRateMelee = 0.8f;
                 BaseHitRateRanged = 0.7f;
                 BaseHitRateMagic = 0.6f;
@@ -41,12 +66,13 @@ public class BaseStats
 
             case PlayerClass.Archer:
                 BaseHealth = 80;
+                BaseRegen = 0.008f;
                 BaseAttackPowerMelee = 10;
                 BaseAttackPowerRanged = 15;
                 BaseAttackPowerMagic = 5;
                 BaseDefensePowerMelee = 5;
-                BaseDefensePowerMelee = 7;
-                BaseDefensePowerMelee = 5;
+                BaseDefensePowerRanged = 7;
+                BaseDefensePowerMagic = 5;
                 BaseHitRateMelee = 0.7f;
                 BaseHitRateRanged = 0.9f;
                 BaseHitRateMagic = 0.6f;
@@ -59,12 +85,13 @@ public class BaseStats
 
             case PlayerClass.Mage:
                 BaseHealth = 60;
+                BaseRegen = 0.006f;
                 BaseAttackPowerMelee = 8;
                 BaseAttackPowerRanged = 5;
                 BaseAttackPowerMagic = 25;
                 BaseDefensePowerMelee = 5;
-                BaseDefensePowerMelee = 5;
-                BaseDefensePowerMelee = 7;
+                BaseDefensePowerRanged = 5;
+                BaseDefensePowerMagic = 7;
                 BaseHitRateMelee = 0.6f;
                 BaseHitRateRanged = 0.5f;
                 BaseHitRateMagic = 0.9f;
@@ -74,46 +101,75 @@ public class BaseStats
                 BaseAttackSpeed = 0.8f;
                 BaseMovementSpeed = 1.0f;
                 break;
-
             default:
-                BaseHealth = 90;
-                BaseAttackPowerMelee = 10;
-                BaseAttackPowerRanged = 10;
-                BaseAttackPowerMagic = 10;
-                BaseDefensePowerMelee = 5;
-                BaseDefensePowerMelee = 5;
-                BaseDefensePowerMelee = 5;
-                BaseHitRateMelee = 0.7f;
-                BaseHitRateRanged = 0.7f;
-                BaseHitRateMagic = 0.7f;
-                BaseEvasionMelee = 0.05f;
-                BaseEvasionRanged = 0.05f;
-                BaseEvasionMagic = 0.05f;
-                BaseAttackSpeed = 1.0f;
-                BaseMovementSpeed = 1.0f;
-                break;
+                throw new System.ArgumentOutOfRangeException(nameof(playerClass), playerClass, "Unrecognized PlayerClass"); //code error, bad function call
         }
-    }
+        var health = new Health(BaseHealth, BaseRegen);
 
-    public CombatStatStructure CalculateStatsAtLevel(int level)
-    {
-        // Calculate stats dynamically per level
         return new CombatStatStructure(
-            BaseHealth + (level - 1) * 10,
-            BaseAttackPowerMelee + (level - 1) * 2,
-            BaseAttackPowerRanged + (level - 1) * 2,
-            BaseAttackPowerMagic + (level - 1) * 2,
-            BaseDefensePowerMelee + (level - 1) * 2,
-            BaseDefensePowerRanged + (level - 1) * 2,
-            BaseDefensePowerMagic + (level - 1) * 2,
-            BaseHitRateMelee + (level - 1) * 0.02f,
-            BaseHitRateRanged + (level - 1) * 0.02f,
-            BaseHitRateMagic + (level - 1) * 0.02f,
-            BaseEvasionMelee + (level - 1) * 0.02f,
-            BaseEvasionRanged + (level - 1) * 0.02f,
-            BaseEvasionMagic + (level - 1) * 0.02f,
-            BaseAttackSpeed + (level - 1) * 0.02f,
-            BaseMovementSpeed + (level - 1) * 0.02f
+            health,
+            BaseAttackPowerMelee,
+            BaseAttackPowerRanged,
+            BaseAttackPowerMagic,
+            BaseDefensePowerMelee,
+            BaseDefensePowerRanged,
+            BaseDefensePowerMagic,
+            BaseHitRateMelee,
+            BaseHitRateRanged,
+            BaseHitRateMagic,
+            BaseEvasionMelee,
+            BaseEvasionRanged,
+            BaseEvasionMagic,
+            BaseAttackSpeed,
+            BaseMovementSpeed
         );
     }
+
+    public static CombatStatStructure CalculateStatsAtLevel(PlayerClass playerClass, int level)
+    {
+        var baseStats = GetStatsFor(playerClass);
+
+        int scaledHealth = baseStats.health.MaxHealth + (level - 1) * 10;
+        int scaledMelee = baseStats.AttackPowerMelee + (level - 1) * 2;
+        int scaledRanged = baseStats.AttackPowerRanged + (level - 1) * 2;
+        int scaledMagic = baseStats.AttackPowerMagic + (level - 1) * 2;
+        int scaledDefMelee = baseStats.DefensePowerMelee + (level - 1) * 2;
+        int scaledDefRanged = baseStats.DefensePowerRanged + (level - 1) * 2;
+        int scaledDefMagic = baseStats.DefensePowerMagic + (level - 1) * 2;
+        float scaledHitMelee = baseStats.HitRateMelee + (level - 1) * 0.02f;
+        float scaledHitRanged = baseStats.HitRateRanged + (level - 1) * 0.02f;
+        float scaledHitMagic = baseStats.HitRateMagic + (level - 1) * 0.02f;
+        float scaledEvadeMelee = baseStats.EvasionMelee + (level - 1) * 0.01f;
+        float scaledEvadeRanged = baseStats.EvasionRanged + (level - 1) * 0.01f;
+        float scaledEvadeMagic = baseStats.EvasionMagic + (level - 1) * 0.01f;
+        float scaledAtkSpeed = baseStats.AttackSpeed + (level - 1) * 0.001f;
+        float scaledMoveSpeed = baseStats.MovementSpeed + (level - 1) * 0.001f;
+
+        var scaledHealthObj = new Health(scaledHealth, baseStats.health.Regen); //Get the scaled max health, and regen % determined from base stats
+
+        return new CombatStatStructure(
+            scaledHealthObj,
+            scaledMelee,
+            scaledRanged,
+            scaledMagic,
+            scaledDefMelee,
+            scaledDefRanged,
+            scaledDefMagic,
+            scaledHitMelee,
+            scaledHitRanged,
+            scaledHitMagic,
+            scaledEvadeMelee,
+            scaledEvadeRanged,
+            scaledEvadeMagic,
+            scaledAtkSpeed,
+            scaledMoveSpeed
+        );
+    }
+}
+public enum PlayerClass
+{
+    None,
+    Warrior,
+    Archer,
+    Mage
 }

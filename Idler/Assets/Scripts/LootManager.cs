@@ -18,9 +18,9 @@ public class LootManager : MonoBehaviour
 
     public void HandleMonsterDrops(Monster monster)
     {
-        Debug.Log($"[LootManager] Handling drops for: {monster.nameOfSpecies}");
+        Debug.Log($"[LootManager] Handling drops for: {monster.monsterName}");
 
-        var loot = monster.dropTable.RollLoot();
+        var loot = monster.DropTable.RollLoot();
         Debug.Log($"[LootManager] Loot rolled: {loot.Count} items");
 
         foreach (var kvp in loot)

@@ -38,8 +38,9 @@ public class SaveManager : MonoBehaviour
 
     public event System.Action<string, bool> OnStatusUpdate;
     public event System.Action<string, bool> OnEndpointResolved;
-    public event System.Action<string, bool> OnError;
+    //public event System.Action<string, bool> OnError;
     public string ResolvedApiBaseUrl { get; private set; }
+    private bool debugLogging = false; // Set to true to enable log outputs, regardless still logs most hard errors/problems
 
     private void Awake()
     {
@@ -123,7 +124,7 @@ public class SaveManager : MonoBehaviour
 
         UploadHandlerRaw handler = new UploadHandlerRaw(fileData);
         handler.contentType = "application/octet-stream";
-        Debug.Log("[UPLOAD] Attempting upload to: " + uploadUrl);
+        if (debugLogging) Debug.Log("[UPLOAD] Attempting upload to: " + uploadUrl);
 
         UnityWebRequest request = new UnityWebRequest(uploadUrl, "POST");
         request.uploadHandler = handler;
@@ -177,7 +178,7 @@ public class SaveManager : MonoBehaviour
             request.Dispose();
             yield break;
         }
-        RaiseStatusUpdate("Upload complete: " + resp.message, true);
+        if (debugLogging) RaiseStatusUpdate("Upload complete: " + resp.message, true);
 
         handler.Dispose();
         request.Dispose();
@@ -229,7 +230,7 @@ public class SaveManager : MonoBehaviour
         if (fileRequest.result == UnityWebRequest.Result.Success)
         {
             File.WriteAllBytes(filePath, fileRequest.downloadHandler.data);
-            RaiseStatusUpdate("Downloaded and saved file to: " + filePath, true);
+            if (debugLogging) RaiseStatusUpdate("Downloaded and saved file to: " + filePath, true);
         }
         else
         {
@@ -275,7 +276,7 @@ public class SaveManager : MonoBehaviour
         if (request.result == UnityWebRequest.Result.Success)
         {
             string body = request.downloadHandler.text;
-            Debug.Log($"[DELETE] Response body: {body}");
+            if (debugLogging) Debug.Log($"[DELETE] Response body: {body}");
 
             if (!string.IsNullOrWhiteSpace(body))
             {
@@ -348,7 +349,7 @@ public class SaveManager : MonoBehaviour
 
     public void RaiseStatusUpdate(string message, bool append = false)//Wrapper method for the default bool value, because system.action doesn't support defaults directly
     {
-        Debug.Log($"{message}");
+        if (debugLogging) Debug.Log($"{message}");
         OnStatusUpdate?.Invoke(message, append);
     }
 }

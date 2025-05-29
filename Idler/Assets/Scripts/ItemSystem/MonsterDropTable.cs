@@ -6,6 +6,9 @@ public class MonsterDropTable
     public List<DropEntry> dropEntries = new List<DropEntry>();
 
     // Add a drop entry
+    /// <summary>
+    /// SAMPLE DESCRIPTION/INSTRUCTIONS
+    /// </summary>
     public void AddDrop(string itemName, float dropChance, int minAmount = 1, int maxAmount = 1)
     {
         dropEntries.Add(new DropEntry(itemName, dropChance, minAmount, maxAmount));
