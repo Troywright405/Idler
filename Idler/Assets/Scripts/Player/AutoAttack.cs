@@ -17,7 +17,7 @@ public class AutoAttack : MonoBehaviour
 
     void Start()
     {
-        playerStats = FindFirstObjectByType<PlayerStats>();
+        playerStats = GameManager.Instance.PlayerStats;
         monsterSpawner = FindFirstObjectByType<MonsterSpawner>();
         attackProgressBar = GameObject.Find("AttackProgressBar")?.GetComponent<Slider>();
         
@@ -25,7 +25,7 @@ public class AutoAttack : MonoBehaviour
 
     public void ToggleCombat()
     {
-        Debug.Log($"Combat Toggled: {isCombatActive}");
+        //Debug.Log($"Combat Toggled: {isCombatActive}");
         if (isCombatActive)
         {
             StopCombat();
@@ -60,21 +60,24 @@ public class AutoAttack : MonoBehaviour
     {
         while (isCombatActive)
         {
-            List<Monster> activeMonsters = monsterSpawner.GetActiveMonsters();
+            var activeMonsters = MonsterManager.Instance.GetActiveMonsters();
             if (activeMonsters.Count > 0)
             {
-                Monster targetMonster = activeMonsters[0];
+                var targetMonster = activeMonsters[0];
                 if (targetMonster != null && targetMonster.gameObject.activeSelf)
                 {
-                    currentMonster = targetMonster;
                     yield return StartCoroutine(FillProgressBar());
-                    //HARD CODED melee only (until other classes are implemented), later need to check what type of attack it was
-                    currentMonster.TakeDamage(playerStats.CombatStats.AttackPowerMelee, currentMonster.nameOfSpecies);
-                    if (currentMonster.currentHealth <= 0)
+
+                    int damage = playerStats.CombatStats.AttackPowerMelee;
+                    bool wasAlive = targetMonster.currentHealth > 0;
+
+                    targetMonster.TakeDamage(damage);
+
+                    // Only retaliate if still alive after damage
+                    if (wasAlive && targetMonster.currentHealth > 0)
                     {
-                        OnMonsterKill(currentMonster.experienceReward);
+                        playerStats.TakeDamage(targetMonster.stats.attackPowerMelee);
                     }
-                    playerStats.TakeDamage(currentMonster.attackPowerMelee);
                 }
             }
             else

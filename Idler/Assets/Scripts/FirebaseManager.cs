@@ -20,7 +20,7 @@ public class FirebaseManager : MonoBehaviour
     public string googleClientSec = "GOCSPX-" + "oQ7IVWZl" + "NND35SVK" + "2OdDwX2lML9S"; //Slightly obfuscated for public git crawlers
     public int googleOAuthPort = 51680; // Use a high random port (must match redirect_uri)
     //Firebase project config values
-
+    private bool debugLogging = false; // Set to true to enable log outputs, regardless still logs most hard errors/problems
     void Awake()
     {
         if (Instance != null && Instance != this)
@@ -35,15 +35,16 @@ public class FirebaseManager : MonoBehaviour
     {
         var app = FirebaseApp.DefaultInstance;
         auth = FirebaseAuth.DefaultInstance;
-        Debug.Log("Loaded projectId: " + app.Options.ProjectId);
-        Debug.Log("Loaded apiKey:    " + app.Options.ApiKey);
-  }
+        if (debugLogging) Debug.Log("Loaded projectId: " + app.Options.ProjectId);
+        if (debugLogging) Debug.Log("Loaded apiKey:    " + app.Options.ApiKey);
+
+    }
 
     public void GetIdTokenForCurrentUser(Action<string> onTokenReceived = null)
     {
         if (CurrentUser == null)
         {
-            Debug.LogWarning("No user is currently signed in.");
+            if (debugLogging) Debug.LogWarning("No user is currently signed in.");
             onTokenReceived?.Invoke(null);
             return;
         }
@@ -53,7 +54,7 @@ public class FirebaseManager : MonoBehaviour
             if (task.IsCompleted && !task.IsFaulted && !task.IsCanceled)
             {
                 string token = task.Result;
-                Debug.Log($"Firebase ID Token: {token}");
+                if (debugLogging) Debug.Log($"Firebase ID Token: {token}");
                 onTokenReceived?.Invoke(token);
             }
             else
@@ -112,15 +113,17 @@ public class FirebaseManager : MonoBehaviour
             Debug.LogWarning("Google OAuth failed: " + listenException);
             yield break;
         }
-
-        Debug.Log("[Google OAuth] Received code, exchanging for tokens...");
+        if (debugLogging)
+        {
+            Debug.Log("[Google OAuth] Received code, exchanging for tokens...");
+        }
 
         // Exchange code for tokens
         yield return StartCoroutine(ExchangeCodeForToken(authCode, googleClientId, googleClientSec, redirectUri, (idToken, accessToken) =>
         {
             if (!string.IsNullOrEmpty(idToken) && !string.IsNullOrEmpty(accessToken))
             {
-                Debug.Log("[Google OAuth] Token exchange successful!");
+                if (debugLogging) Debug.Log("[Google OAuth] Token exchange successful!");
                 // Sign in to Firebase
                 SignInToFirebaseWithGoogle(idToken, accessToken);
             }
@@ -140,7 +143,7 @@ public class FirebaseManager : MonoBehaviour
         try
         {
             listener.Start();
-            Debug.Log("[Google OAuth] Listening on " + prefix);
+            if (debugLogging) Debug.Log("[Google OAuth] Listening on " + prefix);
         }
         catch (Exception ex)
         {
@@ -231,7 +234,7 @@ public class FirebaseManager : MonoBehaviour
                 return;
             }
             CurrentUser = task.Result;
-            Debug.Log($"Firebase Google sign-in successful! User: {CurrentUser.Email}");
+            Debug.Log($"Google sign-in successful! User: {CurrentUser.Email}");
         });
     }
 

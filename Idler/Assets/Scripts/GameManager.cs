@@ -6,21 +6,25 @@ using System.Collections;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
-
-    private TMP_Text healthText;
-    private TMP_Text experienceText;
+private Health _subscribedHealth;
+    public TMP_Text healthText;
+    public Slider healthBar;
+    private float healthTargetValue = 1f;     // % from Health
+    private float displayedHealthValue = 1f;  // Smoothly interpolates
+    private TMP_Text xpText;
+    private Slider xpBar;
+    private float xpTargetValue = 0f;
+    private float displayedXPValue = 0f;
     private TMP_Text damageTakenText;
     private TMP_Text monsterNameText;
     private TMP_Text playerLevelText;
     private TMP_Text playerStatsText;
     private TMP_Text enemyStatsText;
-    private Slider healthBar;
     private Slider healthBarEnemy;
-    private Slider experienceBar;
     private Button CombatToggleButton;
     private RectTransform CombatToggleButtonRectTransform;
     private AutoAttack autoAttack;
-    private PlayerStats PlayerStats;
+    public PlayerStats PlayerStats { get; private set; } // This will be the actual player, further instances should/will be supported in the future
     private Monster activeMonster;
     public Monster ActiveMonster => activeMonster;
 
@@ -28,7 +32,8 @@ public class GameManager : MonoBehaviour
     public bool IsCombatActive => isCombatActive; //exposes a copy public, not original
 
     public enum UIFlag { All, hp, xp, lv, damageTaken, monsterName, hpEnemy, statsPlayer, statsMonster, currency }
-
+    //---------------------------------START UNITY FUNCTIONS----------------------------------
+    #region
     void Awake()
     {
         if (Instance == null)
@@ -42,68 +47,80 @@ public class GameManager : MonoBehaviour
         if (CurrencyManager.Instance != null)
         {
             CurrencyManager.Instance.CurrencyChanged += OnCurrencyChanged;
-        }  
+        }
+        DontDestroyOnLoad(gameObject);
+        //InitializePlayer();
     }
-
+    private void InitializePlayer()
+    {
+        PlayerStats = new PlayerStats(PlayerClass.None, 1); // Or load from save file
+        _subscribedHealth = PlayerStats.CombatStats.health; // Health is redefined every level up
+        _subscribedHealth.OnHealthChanged += HandleHealthChanged;
+        PlayerStats.Experience.OnXPChanged      += HandleXPChanged;
+        PlayerStats.Experience.OnLevelChanged   += HandleLevelChanged;
+    }
     void Start()
     {
         // Dynamically find references at runtime cause fuck the unity inspector assignment
         healthText = GameObject.Find("HealthText")?.GetComponent<TMP_Text>();
-        experienceText = GameObject.Find("ExperienceText")?.GetComponent<TMP_Text>();
+        xpText = GameObject.Find("ExperienceText")?.GetComponent<TMP_Text>();
         damageTakenText = GameObject.Find("DamageTakenText")?.GetComponent<TMP_Text>();
         monsterNameText = GameObject.Find("EnemyNameText")?.GetComponent<TMP_Text>();
-        healthBarEnemy = GameObject.Find("healthBarEnemy")?.GetComponent<Slider>();
+        healthBarEnemy = GameObject.Find("EnemyHealthBar")?.GetComponent<Slider>();
         playerLevelText = GameObject.Find("PlayerLevelText")?.GetComponent<TMP_Text>();
         healthBar = GameObject.Find("HealthBar")?.GetComponent<Slider>();
-        experienceBar = GameObject.Find("ExperienceBar")?.GetComponent<Slider>();
+        xpBar = GameObject.Find("ExperienceBar")?.GetComponent<Slider>();
         playerStatsText = GameObject.Find("PlayerStatsText")?.GetComponent<TMP_Text>();
         enemyStatsText = GameObject.Find("EnemyStatsText")?.GetComponent<TMP_Text>();
-        //DelayedInit();
         CombatToggleButton = GameObject.Find("CombatToggleButton").GetComponent<Button>();
         CombatToggleButton.onClick.AddListener(CombatToggle);
-        PlayerStats = PlayerStats.Instance;
-
+        MonsterManager.Instance.OnMonsterChanged += HandleNewMonster;
+        InitializePlayer();
         CombatToggleButtonRectTransform = CombatToggleButton.GetComponent<RectTransform>();
         autoAttack = FindFirstObjectByType<AutoAttack>();
-        // Update the UI once everything is set up
-        DelayedInit();
-    }
-    private IEnumerator DelayedInit()
-    {
-        yield return new WaitForEndOfFrame();
-
         UpdateUI(UIFlag.All);
     }
-
-    private void FixDPIScalingWin11()
+    void Update()
     {
-        var scaler = FindAnyObjectByType<UnityEngine.UI.CanvasScaler>();
-        if (scaler != null)
-        {
-            float dpi = Screen.dpi;
-            if (dpi == 0) dpi = 96;
-            float systemScale = dpi / 96f;
-            scaler.scaleFactor = systemScale;
-        }
+        PlayerStats.TickRegen(Time.deltaTime);
+        // Smooth HP slider
+        displayedHealthValue = SliderUIUtility.SmoothStepTowards(displayedHealthValue, healthTargetValue); // 2nd param is 0.01f by default
+        healthBar.value = displayedHealthValue;
+        healthText.text = $"HP: {Mathf.RoundToInt(PlayerStats.CombatStats.health.Current)} / {PlayerStats.CombatStats.health.MaxHealth}";
+
+        // Smooth XP slider
+        displayedXPValue = SliderUIUtility.SmoothStepTowards(displayedXPValue, xpTargetValue); // 2nd param is 0.01f by default
+        if (xpBar != null)
+            xpBar.value = displayedXPValue;
+
+    }
+    #endregion
+    //----------------------------------END UNITY FUNCTIONS-----------------------------------
+    #region 
+    private void HandleHealthChanged()
+    {
+        UpdateUI(UIFlag.hp);
     }
 
-    private void CombatToggle()
+    private void HandleXPChanged(float normalized)
     {
-        //isCombatActive = !isCombatActive;
-        autoAttack.ToggleCombat();
-    }
-    private void OnCurrencyChanged(int newGoldAmount)
-    {
-        UpdateUI(UIFlag.currency);
+        UpdateUI(UIFlag.xp);
     }
 
+    private void HandleLevelChanged(int newLevel)
+    {
+        UpdateUI(UIFlag.lv);
+        UpdateUI(UIFlag.xp);
+            _subscribedHealth.OnHealthChanged -= HandleHealthChanged;
 
+        _subscribedHealth = PlayerStats.CombatStats.health;
+        _subscribedHealth.OnHealthChanged += HandleHealthChanged;
+        HandleHealthChanged();
+    }
+    #endregion
     public void UpdateUI(UIFlag flag)
     {
-        // Directly reference the CombatStats from PlayerStats
-        var combatStats = PlayerStats.Instance.CombatStats;
-
-        if (combatStats == null) return;
+        if (PlayerStats.CombatStats == null) return;
 
         switch (flag)
         {
@@ -120,70 +137,102 @@ public class GameManager : MonoBehaviour
                 break;
 
             case UIFlag.hp:
-                healthText.text = $"Hp: {PlayerStats.Health.Current}/{PlayerStats.Health._MaxHealth}";
-                healthBar.value = PlayerStats.Health.Percentage;
+                healthText.text = $"Hp: {PlayerStats.CombatStats.health.Current}/{PlayerStats.CombatStats.health.MaxHealth}";
+                healthTargetValue = PlayerStats.CombatStats.health.Percentage;
                 break;
 
             case UIFlag.hpEnemy:
-            if (healthBarEnemy != null)
-            {
-                if (activeMonster != null)
+                if (healthBarEnemy != null)
                 {
-                    healthBarEnemy.value = activeMonster.GetHealthPercent();
-                    healthBarEnemy.gameObject.SetActive(true);
+                    if (activeMonster != null)
+                    {
+                        healthBarEnemy.gameObject.SetActive(true);
+                        healthBarEnemy.value = activeMonster.GetHealthPercent();
+                    }
+                    else
+                    {
+                        healthBarEnemy.value = 0f; // no monster → hide or zero‐out the bar
+                        healthBarEnemy.gameObject.SetActive(false);
+                    }
                 }
-                else
-                {
-                    // no monster → hide or zero‐out the bar
-                    healthBarEnemy.value = 0f;
-                    healthBarEnemy.gameObject.SetActive(false);
-                }
-            }
-            break;
+                break;
 
             case UIFlag.lv:
-                playerLevelText.text = $"Lvl {PlayerStats.Instance.Experience.Level}";
+                playerLevelText.text = $"Lvl {PlayerStats.Experience.Level}";
                 break;
 
             case UIFlag.xp:
-                experienceText.text = $"Exp: {PlayerStats.Instance.Experience.Xp}";
-                experienceBar.value=PlayerStats.Instance.Experience.ExperiencePercentage;
+                xpTargetValue = PlayerStats.Experience.Normalized; // between 0 and 1
+                xpText.text = $"Exp: {PlayerStats.Experience.Xp} / {PlayerStats.Experience.XPToLevel(PlayerStats.Experience.Level)}";
                 break;
 
             case UIFlag.damageTaken:
-                damageTakenText.text = $"Damage Taken: {PlayerStats.totalDamageTaken}";
+                damageTakenText.text = $"Damage Taken: {PlayerStats.CombatStats.health.totalDamageTaken}";
                 break;
 
             case UIFlag.monsterName:
-            if (monsterNameText != null)
-            {
-                monsterNameText.text = activeMonster != null
-                    ? $"{activeMonster.nameOfSpecies}" //No prefix text on this one, but written this way so it can be added (or a suffix)
-                    : "";  // or “No Enemy”
-            }
-            break;
+                if (monsterNameText != null)
+                {
+                    monsterNameText.text = activeMonster != null
+                        ? $"{activeMonster.monsterName}" //No prefix text on this one, but written this way so it can be added (or a suffix)
+                        : "";  // or “No Enemy”
+                }
+                break;
             case UIFlag.statsPlayer:
             case UIFlag.currency:
-            {
-                playerStatsText.text=PlayerStats.Instance.GetStatsSummary();
-            }
-            break;
+                {
+                    playerStatsText.text = PlayerStats.GetStatsSummary();
+                }
+                break;
             case UIFlag.statsMonster:
-            if (enemyStatsText != null && activeMonster != null) //Won't always be an activeonster, so check first
-                enemyStatsText.text = activeMonster.GetStatsSummary();
-            break;
+                if (enemyStatsText != null && activeMonster != null) //Won't always be an activeonster, so check first
+                    enemyStatsText.text =
+                        $"HP: {activeMonster.currentHealth} / {activeMonster.stats.maxHealth}\n" +
+                        $"Melee Atk: {activeMonster.stats.attackPowerMelee}\n" +
+                        //$"Ranged Atk: {activeMonster.attackPowerRanged}\n" +
+                        //$"Magic Atk: {activeMonster.attackPowerMagic}\n" +
+                        //$"Melee Def: {activeMonster.defenseMelee}\n" +
+                        //$"Ranged Def: {activeMonster.defenseRanged}\n" +
+                        //$"Magic Def: {activeMonster.defenseMagic}\n" +
+                        //$"Attack Speed: {activeMonster.attackSpeed}\n" +
+                        //$"Move Speed: {activeMonster.movementSpeed}\n" +
+                        $"EXP: {activeMonster.stats.experienceReward}";
+                break;
         }
+    }
+    private void CombatToggle()
+    {
+        //isCombatActive = !isCombatActive;
+        autoAttack.ToggleCombat();
+    }
+    private void OnCurrencyChanged(int newGoldAmount)
+    {
+        UpdateUI(UIFlag.currency);
     }
 
     /// <summary>
     /// Called by MonsterSpawner whenever a new monster is spawned so GM can track it. Provides looser coupling than reading from monsterspawner,
     /// can display monster data even if actual active monster is changing or null for example (like adding (DEAD) to the UI name and holding it)
     /// </summary>
-    public void SetActiveMonster(Monster monst)
+    private void HandleNewMonster(Monster newMonster)
     {
-        activeMonster = monst;
+        if (activeMonster != null)
+            activeMonster.OnMonsterHPChange -= UpdateMonsterHealthUI; // Unsubscribe from old monster if exists        
+        activeMonster = newMonster;
+        if (activeMonster != null)
+            activeMonster.OnMonsterHPChange += UpdateMonsterHealthUI; // Subscribe to new monster’s HP change event
         UpdateUI(UIFlag.monsterName);
+        UpdateUI(UIFlag.statsMonster);
         UpdateUI(UIFlag.hpEnemy);
     }
+    public void UpdateMonsterHealthUI(Monster m) // Wrapper method to avoid parameters in event subscription calls which are not allowed in Handler functions
+    { // Also called by MonsterManager so wrapper helps decouple
+        if (m == activeMonster) //Just make sure its a match/sync'd before messing with it from an external Manager, probably is never a mismatch but oh well who knows
+            UpdateUI(UIFlag.hpEnemy);
+        UpdateUI(UIFlag.statsMonster);
+    }
+
+
+
 }
-    
+

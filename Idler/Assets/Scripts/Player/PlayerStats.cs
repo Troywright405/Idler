@@ -1,61 +1,22 @@
 // PlayerStats.cs
 using System.Collections;
 using UnityEngine;
-public enum PlayerClass
-{
-    Warrior,
-    Archer,
-    Mage
-}
 
 public class PlayerStats : CharacterStats
 {
-    public static PlayerStats Instance { get; private set; }
+    private float regenTimer = 0f; // This is the actively tracked time-remaining, NOT the setting for how often heals happen 
+    public CombatStatStructure CombatStats { get; private set; } //This is where genuine instance data is stored, this is NOT for compute. Health/XP/Lv is in Experience
 
-    public CombatStatStructure CombatStats { get; private set; } //This is where genuine instance data is stored, this is NOT for compute. XP/Lv is in Experience
-    public BaseStats baseStats;
-    public new Experience Experience { get; protected set; } //Genuine player data stored, but also compute because I was too lazy to separate it so far
-    public int totalDamageTaken; //dumb stat but we can keep for now
-
-    private Coroutine regenCoroutine;
-
-    protected override void Awake()
+    public PlayerStats(PlayerClass playerClass, int level)
     {
-        base.Awake();
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
-        Experience = new Experience();
-    }
-
-    void Start()
-    {
-        Health = new Health(100, 1); //hard coded starting health and level for now
-        Experience = new Experience(); //Object from CharacterStats
-
-        SetStatsBasedOnClass();
-        StartCoroutine(DelayedInit());
-        StartHealthRegen();
-    }
-
-    private IEnumerator DelayedInit()
-    {
-        yield return null;
-        GameManager.Instance.UpdateUI(GameManager.UIFlag.All);
-    }
-
-    private void SetStatsBasedOnClass()
-    {
-        characterClass = PlayerClass.Warrior; // Hardcoded default
-        baseStats = new BaseStats(characterClass);
-
-        CombatStats = baseStats.CalculateStatsAtLevel(Experience.Level);
+        Experience = new Experience(level);
+        characterClass = playerClass;
         ApplyCombatStats();
     }
 
     public void TakeDamage(int damage)
     {
-        Health.TakeDamage(damage);
-        GameManager.Instance.UpdateUI(GameManager.UIFlag.hp);
+        CombatStats.health.TakeDamage(damage - CombatStats.DefensePowerMelee);
     }
 
     public void GainExperience(int amount)
@@ -65,56 +26,50 @@ public class PlayerStats : CharacterStats
             HandleLevelUp(Experience.Level, null); // Apply new level stats
         }
 
-        GameManager.Instance.UpdateUI(GameManager.UIFlag.xp); // Update XP UI
     }
 
     protected override void HandleLevelUp(int newLevel, CombatStatStructure newStats)
     {
-        // Update combat stats on level-up
-        CombatStats = baseStats.CalculateStatsAtLevel(newLevel);
         ApplyCombatStats();
-        GameManager.Instance.UpdateUI(GameManager.UIFlag.All); // Update full UI
     }
 
     private void ApplyCombatStats()
     {
-        Health.MaxHealth = CombatStats.Health;
+        CombatStats = BaseStats.CalculateStatsAtLevel(PlayerClass.None, Experience.Level); //Get base stats first, combined with current level
         //maybe add more here
     }
-
-    public void StartHealthRegen()
+    public void TickRegen(float deltaTime) //GameManager Update()
+{
+    regenTimer += deltaTime;
+    if (regenTimer >= 1f)
     {
-        if (regenCoroutine == null)
-            regenCoroutine = StartCoroutine(RegenLoop());
+        regenTimer = 0f;
+        if (CombatStats.health.Current < CombatStats.health.MaxHealth)
+        {
+            CombatStats.health.Regenerate(); // Still calls OnHealthChanged
+        }
     }
-
-    private IEnumerator RegenLoop()
+}
+    private IEnumerator RegenLoop() // OBSOLETE, pending removal
     {
         while (true)
         {
-            yield return new WaitForSeconds(1f);
-            if (Health.Current < Health.MaxHealth)
+            yield return new WaitForSeconds(1f); //Possibly use a variable instead of hard coded 1 second for "increase" effects visually
+            if (CombatStats.health.Current < CombatStats.health.MaxHealth)
             {
-                int regenAmount = Mathf.CeilToInt(Health.MaxHealth * 0.01f);
-                Health.Heal(regenAmount);
+                CombatStats.health.Regenerate(); // Self contained, it already uses internal variables
                 GameManager.Instance.UpdateUI(GameManager.UIFlag.hp);
             }
         }
     }
     public string GetStatsSummary() //String builder for UI
     {
-        if (CurrencyManager.Instance != null)
-        {
             return
-                $"Gold: {CurrencyManager.Instance.GetTotalGold()}\n" +
+                $"Regen: {CombatStats.health.RegenAmount} (<1 means 1)\n" +
+                $"Regen %: {CombatStats.health.PercentageRegen}\n" +
+                //$"Gold: {CurrencyManager.Instance.GetTotalGold()}\n" +
                 $"Melee Atk: {CombatStats.AttackPowerMelee}\n" +
                 $"Melee Def: {CombatStats.DefensePowerMelee}";
-        }
-        else
-        {
-            return $"Gold:\n" + // Default to 0 if CurrencyManager is not initialized
-               $"Melee Atk: {CombatStats.AttackPowerMelee}\n" +
-               $"Melee Def: {CombatStats.DefensePowerMelee}";
-        }
+
     }
 }

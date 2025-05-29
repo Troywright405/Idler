@@ -11,6 +11,7 @@ public class ItemDatabase : MonoBehaviour
 {
     // Basic currency
     itemDatabase.Add("Gold", new Item("Gold", ItemFlag.Currency, value: 1, desc: "Placeholder coin so far"));
+    itemDatabase.Add("Herb", new Item("Herb", ItemFlag.Consumable | ItemFlag.Material, 0, "Not weed, herb"));
 
     Debug.Log("[ItemDatabase] Default items loaded:");
     foreach (var key in itemDatabase.Keys)
