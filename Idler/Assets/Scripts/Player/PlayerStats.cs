@@ -5,37 +5,41 @@ using UnityEngine;
 public class PlayerStats : CharacterStats
 {
     private float regenTimer = 0f; // This is the actively tracked time-remaining, NOT the setting for how often heals happen 
-    public CombatStatStructure CombatStats { get; private set; } //This is where genuine instance data is stored, this is NOT for compute. Health/XP/Lv is in Experience
+    public CombatStats CombatStats { get; private set; } //This is where genuine instance data is stored, this is NOT for compute. Health/XP/Lv is in Experience
 
     public PlayerStats(PlayerClass playerClass, int level)
     {
         Experience = new Experience(level);
         characterClass = playerClass;
-        ApplyCombatStats();
+        InitCombatStats();
     }
 
     public void TakeDamage(int damage)
     {
-        CombatStats.health.TakeDamage(damage - CombatStats.DefensePowerMelee);
+        CombatStats.health.TakeDamage(damage - CombatStats.DefenseMelee);
     }
 
     public void GainExperience(int amount)
     {
         if (Experience.AddXP(amount)) // If level-up happened
         {
-            HandleLevelUp(Experience.Level, null); // Apply new level stats
+            HandleLevelUp(); // Apply new level stats
         }
 
     }
 
-    protected override void HandleLevelUp(int newLevel, CombatStatStructure newStats)
+    protected override void HandleLevelUp() // I'm sure we can have more level up events later but for now this is separated into a 1 call function
     {
         ApplyCombatStats();
     }
-
+    private void InitCombatStats()
+    {
+        CombatStats = BaseStats.GetStatsAtLevel(PlayerClass.None, Experience.Level); // Create CombatStats object w/ base calculated stats (later this will load Save)
+        //maybe add more here
+    }
     private void ApplyCombatStats()
     {
-        CombatStats = BaseStats.CalculateStatsAtLevel(PlayerClass.None, Experience.Level); //Get base stats first, combined with current level
+        CombatStats = BaseStats.GetStatsAtLevel(PlayerClass.None, Experience.Level,CombatStats); // Update the CombatStats object with recalculated stats
         //maybe add more here
     }
     public void TickRegen(float deltaTime) //GameManager Update()
@@ -68,8 +72,8 @@ public class PlayerStats : CharacterStats
                 $"Regen: {CombatStats.health.RegenAmount} (<1 means 1)\n" +
                 $"Regen %: {CombatStats.health.PercentageRegen}\n" +
                 //$"Gold: {CurrencyManager.Instance.GetTotalGold()}\n" +
-                $"Melee Atk: {CombatStats.AttackPowerMelee}\n" +
-                $"Melee Def: {CombatStats.DefensePowerMelee}";
+                $"Melee Atk: {CombatStats.AttackMelee}\n" +
+                $"Melee Def: {CombatStats.DefenseMelee}";
 
     }
 }

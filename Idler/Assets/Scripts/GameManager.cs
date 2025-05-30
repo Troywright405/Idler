@@ -6,7 +6,7 @@ using System.Collections;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
-private Health _subscribedHealth;
+    private Health _subscribedHealth;
     public TMP_Text healthText;
     public Slider healthBar;
     private float healthTargetValue = 1f;     // % from Health
@@ -20,6 +20,7 @@ private Health _subscribedHealth;
     private TMP_Text playerLevelText;
     private TMP_Text playerStatsText;
     private TMP_Text enemyStatsText;
+    private TMP_Text areaNameText;
     private Slider healthBarEnemy;
     private Button CombatToggleButton;
     private RectTransform CombatToggleButtonRectTransform;
@@ -27,11 +28,13 @@ private Health _subscribedHealth;
     public PlayerStats PlayerStats { get; private set; } // This will be the actual player, further instances should/will be supported in the future
     private Monster activeMonster;
     public Monster ActiveMonster => activeMonster;
+    private int currentAreaNumber = 1; // Which area the player is in
+
 
     private bool isCombatActive = false;
     public bool IsCombatActive => isCombatActive; //exposes a copy public, not original
 
-    public enum UIFlag { All, hp, xp, lv, damageTaken, monsterName, hpEnemy, statsPlayer, statsMonster, currency }
+    public enum UIFlag { All, hp, xp, lv, damageTaken, monsterName, hpEnemy, statsPlayer, statsMonster, currency, area }
     //---------------------------------START UNITY FUNCTIONS----------------------------------
     #region
     void Awake()
@@ -56,8 +59,8 @@ private Health _subscribedHealth;
         PlayerStats = new PlayerStats(PlayerClass.None, 1); // Or load from save file
         _subscribedHealth = PlayerStats.CombatStats.health; // Health is redefined every level up
         _subscribedHealth.OnHealthChanged += HandleHealthChanged;
-        PlayerStats.Experience.OnXPChanged      += HandleXPChanged;
-        PlayerStats.Experience.OnLevelChanged   += HandleLevelChanged;
+        PlayerStats.Experience.OnXPChanged += HandleXPChanged;
+        PlayerStats.Experience.OnLevelChanged += HandleLevelChanged;
     }
     void Start()
     {
@@ -73,11 +76,13 @@ private Health _subscribedHealth;
         playerStatsText = GameObject.Find("PlayerStatsText")?.GetComponent<TMP_Text>();
         enemyStatsText = GameObject.Find("EnemyStatsText")?.GetComponent<TMP_Text>();
         CombatToggleButton = GameObject.Find("CombatToggleButton").GetComponent<Button>();
+        areaNameText = GameObject.Find("AreaNameText").GetComponent<TMP_Text>();
         CombatToggleButton.onClick.AddListener(CombatToggle);
         MonsterManager.Instance.OnMonsterChanged += HandleNewMonster;
         InitializePlayer();
         CombatToggleButtonRectTransform = CombatToggleButton.GetComponent<RectTransform>();
         autoAttack = FindFirstObjectByType<AutoAttack>();
+        SetArea(currentAreaNumber); // The area the player is currently in
         UpdateUI(UIFlag.All);
     }
     void Update()
@@ -97,25 +102,18 @@ private Health _subscribedHealth;
     #endregion
     //----------------------------------END UNITY FUNCTIONS-----------------------------------
     #region 
-    private void HandleHealthChanged()
+    public void SetArea(int areaNumber)
     {
-        UpdateUI(UIFlag.hp);
-    }
-
-    private void HandleXPChanged(float normalized)
-    {
-        UpdateUI(UIFlag.xp);
-    }
-
-    private void HandleLevelChanged(int newLevel)
-    {
-        UpdateUI(UIFlag.lv);
-        UpdateUI(UIFlag.xp);
-            _subscribedHealth.OnHealthChanged -= HandleHealthChanged;
-
-        _subscribedHealth = PlayerStats.CombatStats.health;
-        _subscribedHealth.OnHealthChanged += HandleHealthChanged;
-        HandleHealthChanged();
+        var area = AreaDatabase.Get(areaNumber);
+        if (area == null)
+        {
+            Debug.LogWarning($"Area {areaNumber} not found!");
+            return;
+        }
+        currentAreaNumber = areaNumber;
+        MonsterSpawner.Instance.SetActiveSpawnList(area.Spawns);
+        UpdateUI(UIFlag.area);
+        // Later: update backgrounds, etc.
     }
     #endregion
     public void UpdateUI(UIFlag flag)
@@ -185,24 +183,29 @@ private Health _subscribedHealth;
                 }
                 break;
             case UIFlag.statsMonster:
-                if (enemyStatsText != null && activeMonster != null) //Won't always be an activeonster, so check first
-                    enemyStatsText.text =
-                        $"HP: {activeMonster.currentHealth} / {activeMonster.stats.maxHealth}\n" +
-                        $"Melee Atk: {activeMonster.stats.attackPowerMelee}\n" +
-                        //$"Ranged Atk: {activeMonster.attackPowerRanged}\n" +
-                        //$"Magic Atk: {activeMonster.attackPowerMagic}\n" +
-                        //$"Melee Def: {activeMonster.defenseMelee}\n" +
-                        //$"Ranged Def: {activeMonster.defenseRanged}\n" +
-                        //$"Magic Def: {activeMonster.defenseMagic}\n" +
-                        //$"Attack Speed: {activeMonster.attackSpeed}\n" +
-                        //$"Move Speed: {activeMonster.movementSpeed}\n" +
-                        $"EXP: {activeMonster.stats.experienceReward}";
+                {
+                    if (enemyStatsText != null && activeMonster != null) //Won't always be an activeonster, so check first
+                        enemyStatsText.text =
+                            $"HP: {activeMonster.currentHealth} / {activeMonster.stats.maxHealth}\n" +
+                            $"Melee Atk: {activeMonster.stats.attackMelee}\n" +
+                            //$"Ranged Atk: {activeMonster.attackPowerRanged}\n" +
+                            //$"Magic Atk: {activeMonster.attackPowerMagic}\n" +
+                            $"Melee Def: {activeMonster.stats.defenseMelee}\n" +
+                            //$"Ranged Def: {activeMonster.defenseRanged}\n" +
+                            //$"Magic Def: {activeMonster.defenseMagic}\n" +
+                            //$"Attack Speed: {activeMonster.attackSpeed}\n" +
+                            $"EXP: {activeMonster.stats.experienceReward}";
+                }
+                break;
+            case UIFlag.area:
+                {
+                    areaNameText.text = $"Area {currentAreaNumber}: {AreaDatabase.Get(currentAreaNumber).Name}";
+                }
                 break;
         }
     }
     private void CombatToggle()
     {
-        //isCombatActive = !isCombatActive;
         autoAttack.ToggleCombat();
     }
     private void OnCurrencyChanged(int newGoldAmount)
@@ -231,7 +234,22 @@ private Health _subscribedHealth;
             UpdateUI(UIFlag.hpEnemy);
         UpdateUI(UIFlag.statsMonster);
     }
+    private void HandleHealthChanged()
+    {
+        UpdateUI(UIFlag.hp);
+    }
 
+    private void HandleXPChanged(float normalized)
+    {
+        UpdateUI(UIFlag.xp);
+    }
+
+    private void HandleLevelChanged(int newLevel)
+    {
+        UpdateUI(UIFlag.lv);
+        UpdateUI(UIFlag.xp);
+        HandleHealthChanged();
+    }
 
 
 }

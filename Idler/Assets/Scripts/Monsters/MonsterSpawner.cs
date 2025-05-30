@@ -10,6 +10,7 @@ public class MonsterSpawner : MonoBehaviour
     public TMP_Text logText;
     public float respawnTime = 3.0f;
     private bool monsterSpawnsEnabled = true;
+    private SpawnList activeSpawnList;
 
     void Awake()
     {
@@ -26,22 +27,33 @@ public class MonsterSpawner : MonoBehaviour
     {
         if (!MonsterManager.Instance.CanSpawnMore()) return;
 
-        List<string> names = MonsterDatabase.GetAllMonsterNames();
-        if (names.Count == 0) //If its empty, abort
+        if (activeSpawnList == null || activeSpawnList.Entries.Count == 0)
         {
-            Debug.LogError("MonsterDatabase has no defined monsters");
+            Debug.LogError("No active spawn list set, or list is empty!");
             return;
         }
-        string selectedName = names[Random.Range(0, names.Count)]; // this should be updated to reference spawn lists and weighted systems, right now all are equally random
-        int level = Random.Range(1, 2); // level range, hard coded for now
 
-        // Spawn monster using data only
-        GameObject monsterGO = new GameObject(selectedName);
+        SpawnEntry entry = activeSpawnList.GetRandom();
+        MonsterBaseStats baseStats = MonsterDatabase.GetById(entry.MonsterId).Clone();
+
+        if (entry.CustomName != null)
+            baseStats.name = entry.CustomName;
+        int monsterLevel = entry.CustomLevel ?? 1; // default level = 1
+
+        foreach (var statName in MonsterBaseStats.AllStatNames())
+        {
+            if (entry.StatOverrides != null && entry.StatOverrides.TryGetValue(statName, out float val))
+                baseStats.SetStat(statName, val);
+            else if (entry.MaxDeviation.HasValue)
+                baseStats.SetStat(statName, baseStats.GetStat(statName) * SpawnList.RollDeviation(entry.MaxDeviation.Value));
+        }
+
+        GameObject monsterGO = new GameObject(baseStats.name);
         Monster monster = monsterGO.AddComponent<Monster>();
-
-        monster.Initialize(selectedName, level);
+        monster.InitializeFromStats(baseStats, monsterLevel);
 
         MonsterManager.Instance.RegisterMonster(monster);
+
     }
 
     public IEnumerator RespawnMonster()
@@ -56,4 +68,13 @@ public class MonsterSpawner : MonoBehaviour
         yield return new WaitForSeconds(respawnTime);
         SpawnMonster();
     }
+    public void SetActiveSpawnList(SpawnList list) // Set by sending a hard-selected list
+    {
+        activeSpawnList = list;
+    }
+    public void SetActiveSpawnList(string key) // Set by just searching the DB for 
+    {
+        activeSpawnList = SpawnListDatabase.Get(key);
+    }
+
 }

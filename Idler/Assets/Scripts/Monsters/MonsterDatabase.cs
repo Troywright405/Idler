@@ -82,12 +82,19 @@ public static class MonsterDatabase
                 new ("Gold", 1.0f, 1, 3) // Add comma and another line to add more
             }        }
     };
-    public static List<string> GetAllMonsterNames() => new(MonsterBaseStats.Keys);
+    public static List<string> GetAllMonsterNames() => new(MonsterBaseStats.Keys); //Probably only for debug unless a master list is called for somewhere
 
     static MonsterDatabase()
     {
         foreach (var def in Definitions)
             MonsterBaseStats[def.name] = def;
     }
+    public static MonsterBaseStats GetById(string id)
+    {
+        if (MonsterBaseStats.TryGetValue(id, out var stats))
+            return stats;
+        throw new System.Exception($"MonsterBaseStats not found: {id}");
+    }
+
 
 }

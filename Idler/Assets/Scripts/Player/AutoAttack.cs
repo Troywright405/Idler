@@ -68,15 +68,15 @@ public class AutoAttack : MonoBehaviour
                 {
                     yield return StartCoroutine(FillProgressBar());
 
-                    int damage = playerStats.CombatStats.AttackPowerMelee;
+                    int damage = playerStats.CombatStats.AttackMelee;
                     bool wasAlive = targetMonster.currentHealth > 0;
 
-                    targetMonster.TakeDamage(damage);
+                    targetMonster.TakeDamage(damage - targetMonster.stats.defenseMelee);
 
                     // Only retaliate if still alive after damage
                     if (wasAlive && targetMonster.currentHealth > 0)
                     {
-                        playerStats.TakeDamage(targetMonster.stats.attackPowerMelee);
+                        playerStats.TakeDamage(targetMonster.stats.attackMelee);
                     }
                 }
             }

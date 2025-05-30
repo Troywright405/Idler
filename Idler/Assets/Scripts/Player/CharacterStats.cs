@@ -12,8 +12,8 @@ public class CharacterStats
         // PlayerStats needs this due to inherit
     }
 
-    protected virtual void HandleLevelUp(int newLevel, CombatStatStructure newStats)
+    protected virtual void HandleLevelUp()
     {
-        
+
     }
 }
