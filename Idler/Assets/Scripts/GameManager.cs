@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour
     private TMP_Text playerLevelText;
     private TMP_Text playerStatsText;
     private TMP_Text enemyStatsText;
+    private TMP_Text areaNameText;
     private Slider healthBarEnemy;
     private Button CombatToggleButton;
     private RectTransform CombatToggleButtonRectTransform;
@@ -33,7 +34,7 @@ public class GameManager : MonoBehaviour
     private bool isCombatActive = false;
     public bool IsCombatActive => isCombatActive; //exposes a copy public, not original
 
-    public enum UIFlag { All, hp, xp, lv, damageTaken, monsterName, hpEnemy, statsPlayer, statsMonster, currency }
+    public enum UIFlag { All, hp, xp, lv, damageTaken, monsterName, hpEnemy, statsPlayer, statsMonster, currency, area }
     //---------------------------------START UNITY FUNCTIONS----------------------------------
     #region
     void Awake()
@@ -75,6 +76,7 @@ public class GameManager : MonoBehaviour
         playerStatsText = GameObject.Find("PlayerStatsText")?.GetComponent<TMP_Text>();
         enemyStatsText = GameObject.Find("EnemyStatsText")?.GetComponent<TMP_Text>();
         CombatToggleButton = GameObject.Find("CombatToggleButton").GetComponent<Button>();
+        areaNameText = GameObject.Find("AreaNameText").GetComponent<TMP_Text>();
         CombatToggleButton.onClick.AddListener(CombatToggle);
         MonsterManager.Instance.OnMonsterChanged += HandleNewMonster;
         InitializePlayer();
@@ -110,7 +112,8 @@ public class GameManager : MonoBehaviour
         }
         currentAreaNumber = areaNumber;
         MonsterSpawner.Instance.SetActiveSpawnList(area.Spawns);
-        // Later: update backgrounds, music, etc.
+        UpdateUI(UIFlag.area);
+        // Later: update backgrounds, etc.
     }
     #endregion
     public void UpdateUI(UIFlag flag)
@@ -180,18 +183,24 @@ public class GameManager : MonoBehaviour
                 }
                 break;
             case UIFlag.statsMonster:
-                if (enemyStatsText != null && activeMonster != null) //Won't always be an activeonster, so check first
-                    enemyStatsText.text =
-                        $"HP: {activeMonster.currentHealth} / {activeMonster.stats.maxHealth}\n" +
-                        $"Melee Atk: {activeMonster.stats.attackMelee}\n" +
-                        //$"Ranged Atk: {activeMonster.attackPowerRanged}\n" +
-                        //$"Magic Atk: {activeMonster.attackPowerMagic}\n" +
-                        //$"Melee Def: {activeMonster.defenseMelee}\n" +
-                        //$"Ranged Def: {activeMonster.defenseRanged}\n" +
-                        //$"Magic Def: {activeMonster.defenseMagic}\n" +
-                        //$"Attack Speed: {activeMonster.attackSpeed}\n" +
-                        //$"Move Speed: {activeMonster.movementSpeed}\n" +
-                        $"EXP: {activeMonster.stats.experienceReward}";
+                {
+                    if (enemyStatsText != null && activeMonster != null) //Won't always be an activeonster, so check first
+                        enemyStatsText.text =
+                            $"HP: {activeMonster.currentHealth} / {activeMonster.stats.maxHealth}\n" +
+                            $"Melee Atk: {activeMonster.stats.attackMelee}\n" +
+                            //$"Ranged Atk: {activeMonster.attackPowerRanged}\n" +
+                            //$"Magic Atk: {activeMonster.attackPowerMagic}\n" +
+                            $"Melee Def: {activeMonster.stats.defenseMelee}\n" +
+                            //$"Ranged Def: {activeMonster.defenseRanged}\n" +
+                            //$"Magic Def: {activeMonster.defenseMagic}\n" +
+                            //$"Attack Speed: {activeMonster.attackSpeed}\n" +
+                            $"EXP: {activeMonster.stats.experienceReward}";
+                }
+                break;
+            case UIFlag.area:
+                {
+                    areaNameText.text = $"Area {currentAreaNumber}: {AreaDatabase.Get(currentAreaNumber).Name}";
+                }
                 break;
         }
     }

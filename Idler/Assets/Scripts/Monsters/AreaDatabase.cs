@@ -6,14 +6,15 @@ public static class AreaDatabase
 
     static AreaDatabase()
     {
-        Areas[1] = new Area(1, "",SpawnListDatabase.Get("Slime Central"));
-        Areas[2] = new Area(2, "",SpawnListDatabase.Get("Goblin Breed Pit"));
+        Areas[1] = new Area(1, "Slime nest", SpawnListDatabase.Get("firstSpawns"));
+        Areas[2] = new Area(2, "Goblin breeding site", SpawnListDatabase.Get("strongerSpawns"));
     }
 
     public static Area Get(int areaNumber)
     {
         return Areas.TryGetValue(areaNumber, out var area) ? area : null;
     }
+    
 }
 public class Area
 {
