@@ -71,7 +71,7 @@ public class AutoAttack : MonoBehaviour
                     int damage = playerStats.CombatStats.AttackMelee;
                     bool wasAlive = targetMonster.currentHealth > 0;
 
-                    targetMonster.TakeDamage(damage);
+                    targetMonster.TakeDamage(damage - targetMonster.stats.attackMelee);
 
                     // Only retaliate if still alive after damage
                     if (wasAlive && targetMonster.currentHealth > 0)
