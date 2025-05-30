@@ -39,9 +39,9 @@ public static class MonsterCalculateStats
         {
             name = monsterName,
             maxHealth = scaledHealth,
-            attackPowerMelee = scaledMelee,
-            attackPowerRanged = scaledRanged,
-            attackPowerMagic = scaledMagic,
+            attackMelee = scaledMelee,
+            attackRanged = scaledRanged,
+            attackMagic = scaledMagic,
             defenseMelee = scaledDefMelee,
             defenseRanged = scaledDefRanged,
             defenseMagic = scaledDefMagic,

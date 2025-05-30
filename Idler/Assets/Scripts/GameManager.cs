@@ -6,7 +6,7 @@ using System.Collections;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
-private Health _subscribedHealth;
+    private Health _subscribedHealth;
     public TMP_Text healthText;
     public Slider healthBar;
     private float healthTargetValue = 1f;     // % from Health
@@ -111,10 +111,6 @@ private Health _subscribedHealth;
     {
         UpdateUI(UIFlag.lv);
         UpdateUI(UIFlag.xp);
-            _subscribedHealth.OnHealthChanged -= HandleHealthChanged;
-
-        _subscribedHealth = PlayerStats.CombatStats.health;
-        _subscribedHealth.OnHealthChanged += HandleHealthChanged;
         HandleHealthChanged();
     }
     #endregion
@@ -188,7 +184,7 @@ private Health _subscribedHealth;
                 if (enemyStatsText != null && activeMonster != null) //Won't always be an activeonster, so check first
                     enemyStatsText.text =
                         $"HP: {activeMonster.currentHealth} / {activeMonster.stats.maxHealth}\n" +
-                        $"Melee Atk: {activeMonster.stats.attackPowerMelee}\n" +
+                        $"Melee Atk: {activeMonster.stats.attackMelee}\n" +
                         //$"Ranged Atk: {activeMonster.attackPowerRanged}\n" +
                         //$"Magic Atk: {activeMonster.attackPowerMagic}\n" +
                         //$"Melee Def: {activeMonster.defenseMelee}\n" +

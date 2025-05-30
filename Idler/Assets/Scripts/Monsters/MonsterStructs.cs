@@ -4,7 +4,7 @@ public class MonsterStats // Container for level adjusted values
 {
     public string name;
     public int maxHealth;
-    public int attackPowerMelee, attackPowerRanged, attackPowerMagic;
+    public int attackMelee, attackRanged, attackMagic;
     public int defenseMelee, defenseRanged, defenseMagic;
     public float hitRateMelee, hitRateRanged, hitRateMagic;
     public float evasionMelee, evasionRanged, evasionMagic;
