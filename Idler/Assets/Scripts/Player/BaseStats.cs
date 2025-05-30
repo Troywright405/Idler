@@ -28,7 +28,7 @@ public static class BaseStats
         [PlayerClass.None] = new StatsTemplate
     {
         BaseHealth = 50,  BaseRegen = 0.005f,
-        BaseAttackMelee = 65,  BaseAttackRanged = 5,  BaseAttackMagic = 5,
+        BaseAttackMelee = 5,  BaseAttackRanged = 5,  BaseAttackMagic = 5,
         BaseDefenseMelee = 2,  BaseDefenseRanged = 2,  BaseDefenseMagic = 2,
         BaseHitRateMelee = 0.7f,  BaseHitRateRanged = 0.7f,  BaseHitRateMagic = 0.7f,
         BaseEvasionMelee = 0.05f,  BaseEvasionRanged = 0.05f,  BaseEvasionMagic = 0.05f,

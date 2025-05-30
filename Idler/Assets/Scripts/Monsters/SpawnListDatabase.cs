@@ -11,7 +11,7 @@ public static class SpawnListDatabase
     static SpawnListDatabase()
     {
         // --- Predefined Spawn Lists ---
-        spawnLists["Slime Central"] = new SpawnList
+        spawnLists["firstSpawns"] = new SpawnList
         {
             Entries = {
             new SpawnEntry("Slime", 10), // 10 to 1 spawn rate
@@ -19,7 +19,7 @@ public static class SpawnListDatabase
         }
         };
 
-        spawnLists["Goblin Breed Pit"] = new SpawnList
+        spawnLists["strongerSpawns"] = new SpawnList
         {
             Entries = {
             new SpawnEntry("Goblin", 10),
