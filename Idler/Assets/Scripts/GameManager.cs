@@ -27,6 +27,8 @@ public class GameManager : MonoBehaviour
     public PlayerStats PlayerStats { get; private set; } // This will be the actual player, further instances should/will be supported in the future
     private Monster activeMonster;
     public Monster ActiveMonster => activeMonster;
+    private int currentAreaNumber = 1; // Which area the player is in
+
 
     private bool isCombatActive = false;
     public bool IsCombatActive => isCombatActive; //exposes a copy public, not original
@@ -56,8 +58,8 @@ public class GameManager : MonoBehaviour
         PlayerStats = new PlayerStats(PlayerClass.None, 1); // Or load from save file
         _subscribedHealth = PlayerStats.CombatStats.health; // Health is redefined every level up
         _subscribedHealth.OnHealthChanged += HandleHealthChanged;
-        PlayerStats.Experience.OnXPChanged      += HandleXPChanged;
-        PlayerStats.Experience.OnLevelChanged   += HandleLevelChanged;
+        PlayerStats.Experience.OnXPChanged += HandleXPChanged;
+        PlayerStats.Experience.OnLevelChanged += HandleLevelChanged;
     }
     void Start()
     {
@@ -78,6 +80,7 @@ public class GameManager : MonoBehaviour
         InitializePlayer();
         CombatToggleButtonRectTransform = CombatToggleButton.GetComponent<RectTransform>();
         autoAttack = FindFirstObjectByType<AutoAttack>();
+        SetArea(currentAreaNumber); // The area the player is currently in
         UpdateUI(UIFlag.All);
     }
     void Update()
@@ -97,21 +100,17 @@ public class GameManager : MonoBehaviour
     #endregion
     //----------------------------------END UNITY FUNCTIONS-----------------------------------
     #region 
-    private void HandleHealthChanged()
+    public void SetArea(int areaNumber)
     {
-        UpdateUI(UIFlag.hp);
-    }
-
-    private void HandleXPChanged(float normalized)
-    {
-        UpdateUI(UIFlag.xp);
-    }
-
-    private void HandleLevelChanged(int newLevel)
-    {
-        UpdateUI(UIFlag.lv);
-        UpdateUI(UIFlag.xp);
-        HandleHealthChanged();
+        var area = AreaDatabase.Get(areaNumber);
+        if (area == null)
+        {
+            Debug.LogWarning($"Area {areaNumber} not found!");
+            return;
+        }
+        currentAreaNumber = areaNumber;
+        MonsterSpawner.Instance.SetActiveSpawnList(area.Spawns);
+        // Later: update backgrounds, music, etc.
     }
     #endregion
     public void UpdateUI(UIFlag flag)
@@ -198,7 +197,6 @@ public class GameManager : MonoBehaviour
     }
     private void CombatToggle()
     {
-        //isCombatActive = !isCombatActive;
         autoAttack.ToggleCombat();
     }
     private void OnCurrencyChanged(int newGoldAmount)
@@ -227,7 +225,22 @@ public class GameManager : MonoBehaviour
             UpdateUI(UIFlag.hpEnemy);
         UpdateUI(UIFlag.statsMonster);
     }
+    private void HandleHealthChanged()
+    {
+        UpdateUI(UIFlag.hp);
+    }
 
+    private void HandleXPChanged(float normalized)
+    {
+        UpdateUI(UIFlag.xp);
+    }
+
+    private void HandleLevelChanged(int newLevel)
+    {
+        UpdateUI(UIFlag.lv);
+        UpdateUI(UIFlag.xp);
+        HandleHealthChanged();
+    }
 
 
 }

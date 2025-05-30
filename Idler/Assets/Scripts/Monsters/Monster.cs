@@ -24,7 +24,7 @@ public class Monster : MonoBehaviour
             }
         }
     }
-    public void Initialize(string initName, int level) //For the Monster
+    public void Initialize(string initName, int level) //[Obsolete] direct spawning bypassing all spawn lists. Maybe only good as an admin/debug function now.
     {
         stats = MonsterCalculateStats.CalculateStatsAtLevel(initName, level);
 
@@ -41,6 +41,24 @@ public class Monster : MonoBehaviour
             }
         }
     }
+    public void InitializeFromStats(MonsterBaseStats baseStats, int level = 1)
+{
+    // Use the new factory to get stats
+    stats = MonsterCalculateStats.FromBaseStats(baseStats, level);
+
+    monsterName = stats.name;
+    name = stats.name; // Set GameObject name
+    currentHealth = stats.maxHealth;
+
+    dropTable = new DropTable();
+    if (stats.predefinedDrops != null)
+    {
+        foreach (var drop in stats.predefinedDrops)
+        {
+            dropTable.AddDrop(drop.itemName, drop.dropChance, drop.minAmount, drop.maxAmount);
+        }
+    }
+}
 
 
 
